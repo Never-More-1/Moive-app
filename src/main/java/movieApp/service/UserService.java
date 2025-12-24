@@ -17,9 +17,9 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.getAllUsers();
-    }
+//    public List<User> getAllUsers() {
+//        return userRepository.getAllUsers();
+//    }
 
     public Optional<User> getUserById(int id) {
         return userRepository.getUserById(id);
@@ -29,9 +29,18 @@ public class UserService {
         return userRepository.addUser(user);
     }
 
+    public boolean updateUserById(int id) throws SQLException {
+        Optional<User> userFromDb = getUserById(id);
+        if (userFromDb.isPresent() && userRepository.updateUserById(id)) {
+            userFromDb = getUserById(id);
+            return userFromDb.isEmpty();
+        }
+        return false;
+    }
+
     public boolean removeUserById(int id) throws SQLException {
         Optional<User> userFromDb = getUserById(id);
-        if(userFromDb.isPresent() && userRepository.removeUserById(id)) {
+        if (userFromDb.isPresent() && userRepository.removeUserById(id)) {
             userFromDb = getUserById(id);
             return userFromDb.isEmpty();
         }

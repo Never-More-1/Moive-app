@@ -8,10 +8,9 @@ import java.time.LocalDateTime;
 @Component
 public class User {
     private int id;
-//    private String firstName;
-//    private String secondName;
+    private String username;
     private int age;
-    private LocalDateTime created;
-//    private LocalDateTime updated;
+    private String role;
     private String email;
+    private LocalDateTime created;
 }

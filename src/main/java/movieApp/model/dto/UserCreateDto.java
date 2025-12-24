@@ -8,8 +8,9 @@ import java.time.LocalDateTime;
 public class UserCreateDto {
     private int id;
     private String username;
+    private int age;
+    private String role;
     private String email;
-    private String password;
-//    private String roles;
-//    private LocalDateTime created;
+    private LocalDateTime created;
+//    private String password;
 }
