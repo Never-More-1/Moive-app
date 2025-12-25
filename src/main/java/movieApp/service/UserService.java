@@ -2,6 +2,7 @@ package movieApp.service;
 
 import movieApp.model.User;
 import movieApp.model.dto.UserCreateDto;
+import movieApp.model.dto.UserUpdateDto;
 import movieApp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +18,9 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-//    public List<User> getAllUsers() {
-//        return userRepository.getAllUsers();
-//    }
+    public List<User> getAllUsers() {
+        return userRepository.getAllUsers();
+    }
 
     public Optional<User> getUserById(int id) {
         return userRepository.getUserById(id);
@@ -29,13 +30,8 @@ public class UserService {
         return userRepository.addUser(user);
     }
 
-    public boolean updateUserById(int id) throws SQLException {
-        Optional<User> userFromDb = getUserById(id);
-        if (userFromDb.isPresent() && userRepository.updateUserById(id)) {
-            userFromDb = getUserById(id);
-            return userFromDb.isEmpty();
-        }
-        return false;
+    public boolean updateUserById(UserUpdateDto user, int id) throws SQLException {
+        return userRepository.updateUserById(user, id);
     }
 
     public boolean removeUserById(int id) throws SQLException {

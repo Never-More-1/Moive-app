@@ -1,5 +1,7 @@
 package movieApp.controller;
 
+import jakarta.validation.Valid;
+import movieApp.model.dto.UserUpdateDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import movieApp.service.UserService;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -43,6 +46,15 @@ public class UserController {
     @PostMapping()
     public ResponseEntity<HttpStatusCode> addUser(@RequestBody UserCreateDto user) throws SQLException {
         if (userService.addUser(user)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@RequestBody UserUpdateDto user,
+                                        @PathVariable("id") int id) throws SQLException {
+        if (userService.updateUserById(user, id)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
