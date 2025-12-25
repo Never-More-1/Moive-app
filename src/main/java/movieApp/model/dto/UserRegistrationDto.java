@@ -9,7 +9,7 @@ import movieApp.annotation.AdultAge;
 @Component
 public class UserRegistrationDto {
     @NotBlank
-    @Size(min = 2, max = 10)
+    @Size(min = 3, max = 15)
     private String username;
 
     @NotBlank

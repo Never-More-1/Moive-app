@@ -14,7 +14,7 @@ import static java.lang.annotation.ElementType.FIELD;
 @Retention(RUNTIME)
 @Target(FIELD)
 public @interface AdultAge {
-    String message() default "Возраст должен быть от 18 до 120";
+    String message() default "Возраст должен быть от 1 до 120";
 
     Class<?>[] groups() default {};
 
