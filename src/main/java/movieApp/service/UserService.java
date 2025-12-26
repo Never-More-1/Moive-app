@@ -1,8 +1,8 @@
 package movieApp.service;
 
 import movieApp.model.User;
-import movieApp.model.dto.UserCreateDto;
-import movieApp.model.dto.UserUpdateDto;
+import movieApp.model.dto.userDto.UserCreateDto;
+import movieApp.model.dto.userDto.UserUpdateDto;
 import movieApp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 

@@ -1,10 +1,10 @@
 package movieApp.repository;
 
-import movieApp.model.dto.UserUpdateDto;
+import movieApp.model.dto.userDto.UserUpdateDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import movieApp.model.User;
 import org.springframework.stereotype.Repository;
-import movieApp.model.dto.UserCreateDto;
+import movieApp.model.dto.userDto.UserCreateDto;
 
 import java.sql.*;
 import java.time.LocalDateTime;

@@ -1,19 +1,17 @@
 package movieApp.controller;
 
-import jakarta.validation.Valid;
-import movieApp.model.dto.UserUpdateDto;
+import movieApp.model.dto.userDto.UserUpdateDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import movieApp.model.User;
-import movieApp.model.dto.UserCreateDto;
+import movieApp.model.dto.userDto.UserCreateDto;
 import movieApp.service.UserService;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -26,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<User>> getAllUsers(Model model) {
+    public ResponseEntity<List<User>> getAllUsers() {
         List<User> allUsers = userService.getAllUsers();
         if(allUsers.isEmpty()){
             return ResponseEntity.noContent().build();

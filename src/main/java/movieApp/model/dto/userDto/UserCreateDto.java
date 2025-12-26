@@ -1,4 +1,4 @@
-package movieApp.model.dto;
+package movieApp.model.dto.userDto;
 
 import lombok.Data;
 

@@ -3,14 +3,13 @@ package movieApp.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import movieApp.exception.UsernameExistException;
-import movieApp.model.dto.UserRegistrationDto;
+import movieApp.model.dto.userDto.UserRegistrationDto;
 import movieApp.service.SecurityService;
 import movieApp.service.UserService;
 

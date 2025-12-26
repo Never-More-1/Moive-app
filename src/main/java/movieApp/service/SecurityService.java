@@ -1,13 +1,9 @@
 package movieApp.service;
 
 import org.springframework.stereotype.Service;
-import movieApp.exception.UsernameExistException;
-import movieApp.model.User;
-import movieApp.model.dto.UserRegistrationDto;
 import movieApp.repository.UserRepository;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 
 @Service
 public class SecurityService {
