@@ -34,15 +34,7 @@ public class UserController {
         return ResponseEntity.ok(allUsers);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") int id, Model model) {
-        Optional<User> user = userService.getUserById(id);
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        }
-        return ResponseEntity.notFound().build();
-    }
-
+    //Create
     @PostMapping()
     public ResponseEntity<HttpStatusCode> addUser(@RequestBody UserCreateDto user) throws SQLException {
         if (userService.addUser(user)) {
@@ -51,8 +43,28 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@RequestBody UserUpdateDto user,
+    //Read
+    @GetMapping("/id/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
+        Optional<User> user = userService.getUserById(id);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
+        Optional<User> user = userService.getUserByUsername(username);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    //Update
+    @PutMapping("/id/{id}")
+    public ResponseEntity<?> updateUserById(@RequestBody UserUpdateDto user,
                                         @PathVariable("id") int id) throws SQLException {
         if (userService.updateUserById(user, id)) {
             return ResponseEntity.noContent().build();
@@ -60,9 +72,27 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatusCode> deleteUser(@PathVariable("id") int id) throws SQLException {
+    @PutMapping("/username/{username}")
+    public ResponseEntity<?> updateUserByUsername(@RequestBody UserUpdateDto user,
+                                                  @PathVariable("username") String username) throws SQLException {
+        if (userService.updateUserByUsername(user, username)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+
+    //Delete
+    @DeleteMapping("/id/{id}")
+    public ResponseEntity<HttpStatusCode> deleteUserById(@PathVariable("id") int id) throws SQLException {
         if (userService.removeUserById(id)) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+
+    @DeleteMapping("/username/{username}")
+    public ResponseEntity<HttpStatusCode> deleteUserByUsername(@PathVariable("username") String username) throws SQLException {
+        if (userService.removeUserByUsername(username)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).build();

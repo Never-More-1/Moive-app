@@ -17,9 +17,11 @@ public class UserRepository {
     private static final String INSERT_USER = "INSERT INTO movie_user(username, age, role, email, created_at) VALUES (?,?,?,?,?)";
     private static final String SELECT_ALL_USERS = "SELECT * FROM movie_user";
     private static final String GET_USER_BY_ID = "SELECT * FROM movie_user WHERE id = ?";
-    private static final String GET_USER_BY_USERNAME = "SELECT * FROM movie_user WHERE name = ?";
+    private static final String GET_USER_BY_USERNAME = "SELECT * FROM movie_user WHERE username = ?";
     private static final String REMOVE_USER_BY_ID = "DELETE FROM movie_user WHERE id = ?";
+    private static final String REMOVE_USER_BY_USERNAME = "DELETE FROM movie_user WHERE username = ?";
     private static final String UPDATE_USER_BY_ID = "UPDATE movie_user SET username = ?, age = ?, role = ?, email = ?, created_at = ? WHERE id = ?";
+    private static final String UPDATE_USER_BY_USERNAME = "UPDATE movie_user SET username = ?, age = ?, role = ?, email = ?, created_at = ? WHERE username = ?";
 
     private Connection connection;
     private final int ONE_LINE_FROM_DB = 1;
@@ -42,6 +44,7 @@ public class UserRepository {
         return new ArrayList<>();
     }
 
+    //Create
     public boolean addUser(UserCreateDto user) throws SQLException{
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER);
@@ -58,22 +61,7 @@ public class UserRepository {
         return false;
     }
 
-    public boolean updateUserById(UserUpdateDto userUpdate, int id) throws SQLException {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_BY_ID);
-            preparedStatement.setString(1, userUpdate.getUsername());
-            preparedStatement.setInt(2, userUpdate.getAge());
-            preparedStatement.setString(3, userUpdate.getRole());
-            preparedStatement.setString(4, userUpdate.getEmail());
-            preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-            preparedStatement.setInt(6, id); // ID для WHERE условия
-            return preparedStatement.executeUpdate() == ONE_LINE_FROM_DB;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return false;
-    }
-
+    //Read
     public Optional<User> getUserById(int id) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_BY_ID);
@@ -96,6 +84,62 @@ public class UserRepository {
             System.out.println(e.getMessage());
         }
         return Optional.empty();
+    }
+
+    //Update
+    public boolean updateUserById(UserUpdateDto userUpdate, int id) throws SQLException {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_BY_ID);
+            preparedStatement.setString(1, userUpdate.getUsername());
+            preparedStatement.setInt(2, userUpdate.getAge());
+            preparedStatement.setString(3, userUpdate.getRole());
+            preparedStatement.setString(4, userUpdate.getEmail());
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setInt(6, id); // ID для WHERE условия
+            return preparedStatement.executeUpdate() == ONE_LINE_FROM_DB;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean updateUserByUsername(UserUpdateDto userUpdate, String username) throws SQLException {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_USER_BY_USERNAME);
+            preparedStatement.setString(1, userUpdate.getUsername());
+            preparedStatement.setInt(2, userUpdate.getAge());
+            preparedStatement.setString(3, userUpdate.getRole());
+            preparedStatement.setString(4, userUpdate.getEmail());
+            preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            preparedStatement.setString(6, username); // username для WHERE условия
+            return preparedStatement.executeUpdate() == ONE_LINE_FROM_DB;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    //Delete
+    public boolean removeUserById(int id) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(REMOVE_USER_BY_ID);
+            preparedStatement.setInt(1, id);
+            return preparedStatement.executeUpdate() == ONE_LINE_FROM_DB;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean removeUserByUsername(String username) throws SQLException {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(REMOVE_USER_BY_USERNAME);
+            preparedStatement.setString(1, username);
+            return preparedStatement.executeUpdate() == ONE_LINE_FROM_DB;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return false;
     }
 
     public List<User> parseResultSetToUserList(ResultSet resultSet) throws SQLException {
@@ -122,16 +166,5 @@ public class UserRepository {
         user.setEmail(resultSet.getString("email"));
         user.setCreated(resultSet.getTimestamp("created_at").toLocalDateTime());
         return user;
-    }
-
-    public boolean removeUserById(int id) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(REMOVE_USER_BY_ID);
-            preparedStatement.setInt(1, id);
-            return preparedStatement.executeUpdate() == ONE_LINE_FROM_DB;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return false;
     }
 }
