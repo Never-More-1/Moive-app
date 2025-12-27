@@ -47,9 +47,7 @@ public class SecurityController {
             }
             throw new ValidationException(String.valueOf(errMessages));
         }
-//        if (securityService.registration(userRegistrationDto)) {
-//            return "redirect:/user"; //редирект вместо прямого возврата
-//        }
+
         model.addAttribute("error_message", "Ошибка регистрации");
         return "registration";
 
