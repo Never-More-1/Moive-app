@@ -4,7 +4,7 @@ public class UsernameExistException extends Throwable {
 
     private String username;
     public UsernameExistException(String username) {
-        super("Username already exists: " + username);
+        super("Пользователь " + username + " уже существует");
         this.username = username;
     }
 
