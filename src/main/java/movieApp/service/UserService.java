@@ -1,11 +1,13 @@
 package movieApp.service;
 
+import movieApp.exception.UserNotFoundException;
 import movieApp.model.User;
 import movieApp.model.dto.userDto.UserCreateDto;
 import movieApp.model.dto.userDto.UserUpdateDto;
 import movieApp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -19,48 +21,39 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return userRepository.getAllUsers();
+
+        return userRepository.findAll();
     }
 
     //Create
-    public boolean addUser(UserCreateDto user) throws SQLException {
-        return userRepository.addUser(user);
+    public User addUser(UserCreateDto user) throws SQLException {
+        User newUser = new User();
+        return userRepository.save(newUser);
     }
 
     //Read
     public Optional<User> getUserById(int id) {
-        return userRepository.getUserById(id);
-    }
-
-    public Optional<User> getUserByUsername(String username) {
-        return userRepository.getUserByUsername(username);
+        return userRepository.findById(id);
     }
 
     //Update
-    public boolean updateUserById(UserUpdateDto user, int id) throws SQLException {
-        return userRepository.updateUserById(user, id);
-    }
+    public User updateUserById(int id, UserUpdateDto userUpdateDto) {
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        existingUser.setUsername(userUpdateDto.getUsername());
+        existingUser.setAge(userUpdateDto.getAge());
+        existingUser.setRole(userUpdateDto.getRole());
+        existingUser.setEmail(userUpdateDto.getEmail());
 
-    public boolean updateUserByUsername(UserUpdateDto user, String username) throws SQLException {
-        return userRepository.updateUserByUsername(user, username);
+        return userRepository.save(existingUser);
     }
 
     //Delete
     public boolean removeUserById(int id) throws SQLException {
+        if (getUserById(id).isEmpty()) {
+            throw new UserNotFoundException(id);
+        }
+        userRepository.deleteById(id);
         Optional<User> userFromDb = getUserById(id);
-        if (userFromDb.isPresent() && userRepository.removeUserById(id)) {
-            userFromDb = getUserById(id);
-            return userFromDb.isEmpty();
-        }
-        return false;
-    }
-
-    public boolean removeUserByUsername(String username) throws SQLException {
-        Optional<User> userFromDb = getUserByUsername(username);
-        if (userFromDb.isPresent() && userRepository.removeUserByUsername(username)) {
-            userFromDb = getUserByUsername(username);
-            return userFromDb.isEmpty();
-        }
-        return false;
+        return userFromDb.isEmpty();
     }
 }

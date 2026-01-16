@@ -1,25 +1,55 @@
 package movieApp.model;
 
-import lombok.Data;
-import org.springframework.stereotype.Component;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
-//TODO: пофиксить Lombok!!!
-@Component
+@Entity
+@Table(name = "movie_user")
 public class User {
-    private int id;
-    private String username;
-    private int age;
-    private String role;
-    private String email;
-    private LocalDateTime created_at;
 
-    public int getId() {
+    @Id
+    @SequenceGenerator(
+            name = "user_generator",
+            sequenceName = "movie_user_id_seq",
+            allocationSize = 1
+    )
+    @GeneratedValue(generator = "user_generator")
+    private Integer id;
+
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+
+    @Column(name = "age", nullable = false)
+    private Integer age;
+
+    @Column(name = "role", nullable = false)
+    private String role;
+
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    // Конструкторы
+    public User() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public User(String username, Integer age, String role, String email) {
+        this.username = username;
+        this.age = age;
+        this.role = role;
+        this.email = email;
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Геттеры и сеттеры
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -31,11 +61,11 @@ public class User {
         this.username = username;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -55,11 +85,11 @@ public class User {
         this.email = email;
     }
 
-    public LocalDateTime getCreated() {
-        return created_at;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated(LocalDateTime created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

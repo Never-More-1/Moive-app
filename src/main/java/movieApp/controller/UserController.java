@@ -1,5 +1,6 @@
 package movieApp.controller;
 
+import movieApp.exception.UserNotFoundException;
 import movieApp.model.dto.userDto.UserUpdateDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -35,7 +36,8 @@ public class UserController {
     //Create
     @PostMapping()
     public ResponseEntity<HttpStatusCode> addUser(@RequestBody UserCreateDto user) throws SQLException {
-        if (userService.addUser(user)) {
+        User savedUser = userService.addUser(user);
+        if (savedUser != null) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -51,46 +53,23 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/username/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
-        Optional<User> user = userService.getUserByUsername(username);
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        }
-        return ResponseEntity.notFound().build();
-    }
-
     //Update
     @PutMapping("/id/{id}")
-    public ResponseEntity<?> updateUserById(@RequestBody UserUpdateDto user,
-                                        @PathVariable("id") int id) throws SQLException {
-        if (userService.updateUserById(user, id)) {
-            return ResponseEntity.noContent().build();
+    public ResponseEntity<?> updateUserById(@RequestBody UserUpdateDto userUpdateDto,
+                                            @PathVariable("id") int id) {
+        try {
+            User updatedUser = userService.updateUserById(id, userUpdateDto);
+            return ResponseEntity.ok(updatedUser);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
-    @PutMapping("/username/{username}")
-    public ResponseEntity<?> updateUserByUsername(@RequestBody UserUpdateDto user,
-                                                  @PathVariable("username") String username) throws SQLException {
-        if (userService.updateUserByUsername(user, username)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.status(HttpStatus.CONFLICT).build();
-    }
 
     //Delete
     @DeleteMapping("/id/{id}")
     public ResponseEntity<HttpStatusCode> deleteUserById(@PathVariable("id") int id) throws SQLException {
         if (userService.removeUserById(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.status(HttpStatus.CONFLICT).build();
-    }
-
-    @DeleteMapping("/username/{username}")
-    public ResponseEntity<HttpStatusCode> deleteUserByUsername(@PathVariable("username") String username) throws SQLException {
-        if (userService.removeUserByUsername(username)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).build();

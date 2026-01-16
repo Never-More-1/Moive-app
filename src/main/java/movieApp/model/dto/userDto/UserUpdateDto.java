@@ -6,50 +6,59 @@ import lombok.Data;
 //TODO: пофиксить Lombok!!!
 @Data
 public class UserUpdateDto {
-        @Size(min = 3, max = 15, message = "Username must be between 3 and 15 characters")
-        private String username;
+    private int id;
 
-        @Min(value = 1)
-        @Max(value = 120)
-        private int age;
+    @Size(min = 3, max = 15, message = "Username must be between 3 and 15 characters")
+    private String username;
 
-        @Pattern(regexp = "GUEST|USER|ADMIN", message = "Role must be GUEST, USER or ADMIN")
-        private String role;
+    @Min(value = 1)
+    @Max(value = 120)
+    private int age;
 
-        @Email(message = "Email should be valid")
-        private String email;
+    @Pattern(regexp = "GUEST|USER|ADMIN", message = "Role must be GUEST, USER or ADMIN")
+    private String role;
 
+    @Email(message = "Email should be valid")
+    private String email;
 
-        public String getUsername() {
-                return username;
-        }
+    public int getId() {
+        return id;
+    }
 
-        public void setUsername(String username) {
-                this.username = username;
-        }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-        public int getAge() {
-                return age;
-        }
+    public String getUsername() {
+        return username;
+    }
 
-        public void setAge(int age) {
-                this.age = age;
-        }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-        public String getRole() {
-                return role;
-        }
+    public int getAge() {
+        return age;
+    }
 
-        public void setRole(String role) {
-                this.role = role;
-        }
+    public void setAge(int age) {
+        this.age = age;
+    }
 
-        public String getEmail() {
-                return email;
-        }
+    public String getRole() {
+        return role;
+    }
 
-        public void setEmail(String email) {
-                this.email = email;
-        }
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
 }

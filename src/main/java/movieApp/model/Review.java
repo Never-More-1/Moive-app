@@ -1,38 +1,69 @@
 package movieApp.model;
 
-import lombok.Data;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
+@Entity
+@Table(name = "review")
 public class Review {
-    private int id;
-    private int userId;
-    private int filmId;
+
+    @Id
+    @SequenceGenerator(
+            name = "review_generator",
+            sequenceName = "review_id_seq",
+            allocationSize = 1
+    )
+    @GeneratedValue(generator = "review_generator")
+    private Integer id;
+
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
+
+    @Column(name = "film_id", nullable = false)
+    private Integer filmId;
+
+    @Column(name = "review_text", nullable = false, columnDefinition = "TEXT")
     private String reviewText;
-    private int rating; // от 1 до 10
+
+    @Column(name = "rating", nullable = false)
+    private Integer rating; // от 1 до 10
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public int getId() {
+    public Review() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Review(Integer userId, Integer filmId, String reviewText, Integer rating) {
+        this.userId = userId;
+        this.filmId = filmId;
+        this.reviewText = reviewText;
+        setRating(rating);
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    public int getFilmId() {
+    public Integer getFilmId() {
         return filmId;
     }
 
-    public void setFilmId(int filmId) {
+    public void setFilmId(Integer filmId) {
         this.filmId = filmId;
     }
 
@@ -44,15 +75,19 @@ public class Review {
         this.reviewText = reviewText;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         // Проверка диапазона 1-10
-        if (rating < 1) rating = 1;
-        if (rating > 10) rating = 10;
-        this.rating = rating;
+        if (rating < 1) {
+            this.rating = 1;
+        } else if (rating > 10) {
+            this.rating = 10;
+        } else {
+            this.rating = rating;
+        }
     }
 
     public LocalDateTime getCreatedAt() {
