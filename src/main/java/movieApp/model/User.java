@@ -31,7 +31,6 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    // Конструкторы
     public User() {
         this.createdAt = LocalDateTime.now();
     }
@@ -44,7 +43,6 @@ public class User {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Геттеры и сеттеры
     public Integer getId() {
         return id;
     }

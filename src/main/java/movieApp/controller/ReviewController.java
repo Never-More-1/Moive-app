@@ -19,7 +19,18 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    // Все отзывы пользователя
+    // create
+    @PostMapping
+    public ResponseEntity<Review> createReview(@RequestBody ReviewCreateDto reviewDto) {
+        try {
+            Review createdReview = reviewService.addReview(reviewDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdReview);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    // read
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Review>> getUserReviews(@PathVariable("userId") int userId) {
         try {
@@ -32,7 +43,6 @@ public class ReviewController {
         }
     }
 
-    // Все отзывы на фильм
     @GetMapping("/film/{filmId}")
     public ResponseEntity<List<Review>> getFilmReviews(@PathVariable("filmId") int filmId) {
         try {
@@ -45,16 +55,6 @@ public class ReviewController {
         }
     }
 
-    // Можно ли создать отзыв?
-    @GetMapping("/can-create/user/{userId}/film/{filmId}")
-    public ResponseEntity<Boolean> canCreateReview(
-            @PathVariable("userId") int userId,
-            @PathVariable("filmId") int filmId) {
-        boolean canCreate = reviewService.canUserCreateReview(userId, filmId);
-        return ResponseEntity.ok(canCreate);
-    }
-
-    // Средний рейтинг фильма
     @GetMapping("/film/{filmId}/rating")
     public ResponseEntity<Double> getFilmRating(@PathVariable("filmId") int filmId) {
         try {
@@ -65,7 +65,6 @@ public class ReviewController {
         }
     }
 
-    // Количество отзывов пользователя
     @GetMapping("/user/{userId}/count")
     public ResponseEntity<Integer> getUserReviewCount(@PathVariable("userId") int userId) {
         try {
@@ -76,18 +75,6 @@ public class ReviewController {
         }
     }
 
-    // Создать отзыв
-    @PostMapping
-    public ResponseEntity<Review> createReview(@RequestBody ReviewCreateDto reviewDto) {
-        try {
-            Review createdReview = reviewService.addReview(reviewDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdReview);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
-
-    // Получить отзыв пользователя на фильм
     @GetMapping("/user/{userId}/film/{filmId}")
     public ResponseEntity<Review> getUserFilmReview(
             @PathVariable("userId") int userId,
@@ -97,20 +84,7 @@ public class ReviewController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Обновить отзыв по ID
-    @PutMapping("/{id}")
-    public ResponseEntity<Review> updateReview(
-            @PathVariable("id") int id,
-            @RequestBody ReviewUpdateDto reviewUpdate) {
-        try {
-            Review updatedReview = reviewService.updateReview(id, reviewUpdate);
-            return ResponseEntity.ok(updatedReview);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
-        }
-    }
-
-    // Обновить отзыв по userId и filmId
+    // update
     @PutMapping("/user/{userId}/film/{filmId}")
     public ResponseEntity<Review> updateReviewByUserAndFilm(
             @PathVariable("userId") int userId,
@@ -124,16 +98,7 @@ public class ReviewController {
         }
     }
 
-    // Удалить отзыв по ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteReview(@PathVariable("id") int id) {
-        boolean deleted = reviewService.removeReviewById(id);
-        return deleted ?
-                ResponseEntity.ok("Отзыв удален") :
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body("Отзыв не найден");
-    }
-
-    // Удалить отзыв по userId и filmId
+    // delete
     @DeleteMapping("/user/{userId}/film/{filmId}")
     public ResponseEntity<String> deleteReviewByUserAndFilm(
             @PathVariable("userId") int userId,

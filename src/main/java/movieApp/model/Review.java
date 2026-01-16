@@ -26,13 +26,9 @@ public class Review {
     private String reviewText;
 
     @Column(name = "rating", nullable = false)
-    private Integer rating; // от 1 до 10
+    private Double rating; // от 1 до 10
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    public Review() {
-        this.createdAt = LocalDateTime.now();
+    public Review(){
     }
 
     public Review(Integer userId, Integer filmId, String reviewText, Integer rating) {
@@ -40,7 +36,6 @@ public class Review {
         this.filmId = filmId;
         this.reviewText = reviewText;
         setRating(rating);
-        this.createdAt = LocalDateTime.now();
     }
 
     public Integer getId() {
@@ -75,26 +70,13 @@ public class Review {
         this.reviewText = reviewText;
     }
 
-    public Integer getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
-        // Проверка диапазона 1-10
-        if (rating < 1) {
-            this.rating = 1;
-        } else if (rating > 10) {
-            this.rating = 10;
-        } else {
-            this.rating = rating;
-        }
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setRating(double rating) {
+        if (rating < 1) rating = 1;
+        if (rating > 10) rating = 10;
+        this.rating = rating;
     }
 }

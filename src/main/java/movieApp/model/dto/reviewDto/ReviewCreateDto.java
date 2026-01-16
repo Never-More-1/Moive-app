@@ -1,14 +1,13 @@
 package movieApp.model.dto.reviewDto;
 
 import lombok.Data;
-import java.time.LocalDateTime;
 
 @Data
 public class ReviewCreateDto {
     private int userId;
     private int filmId;
     private String reviewText;
-    private int rating; // от 1 до 10
+    private double rating; // от 1 до 10
 
     public int getUserId() {
         return userId;
@@ -34,12 +33,11 @@ public class ReviewCreateDto {
         this.reviewText = reviewText;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
-        // Проверка диапазона
+    public void setRating(double rating) {
         if (rating < 1) rating = 1;
         if (rating > 10) rating = 10;
         this.rating = rating;
