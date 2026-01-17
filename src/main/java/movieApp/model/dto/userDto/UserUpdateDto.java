@@ -8,17 +8,17 @@ import lombok.Data;
 public class UserUpdateDto {
     private int id;
 
-    @Size(min = 3, max = 15, message = "Username must be between 3 and 15 characters")
+    @Size(min = 3, max = 15, message = "Username должен быть минимум 3 символа, а максимум 15")
     private String username;
 
     @Min(value = 1)
     @Max(value = 120)
     private int age;
 
-    @Pattern(regexp = "GUEST|USER|ADMIN", message = "Role must be GUEST, USER or ADMIN")
+    @Pattern(regexp = "USER|ADMIN", message = "Роль должна быть USER или ADMIN")
     private String role;
 
-    @Email(message = "Email should be valid")
+    @Email(message = "Email должен быть корректным")
     private String email;
 
     public int getId() {

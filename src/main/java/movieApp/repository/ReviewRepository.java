@@ -14,14 +14,8 @@ public interface ReviewRepository extends JpaRepository<Review, Integer> {
     List<Review> findByUserId(Integer userId);
     List<Review> findByFilmId(Integer filmId);
     Optional<Review> findByUserIdAndFilmId(Integer userId, Integer filmId);
-
-    // Проверить существование отзыва
     boolean existsByUserIdAndFilmId(Integer userId, Integer filmId);
-
-    // Посчитать отзывы пользователя
     int countByUserId(Integer userId);
-
-    // Найти средний рейтинг фильма
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.filmId = :filmId")
     Double findAverageRatingByFilmId(@Param("filmId") Integer filmId);
 }

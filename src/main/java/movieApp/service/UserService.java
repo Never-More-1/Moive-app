@@ -7,7 +7,6 @@ import movieApp.model.dto.userDto.UserUpdateDto;
 import movieApp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -26,8 +25,13 @@ public class UserService {
     }
 
     //Create
-    public User addUser(UserCreateDto user) throws SQLException {
+    public User addUser(UserCreateDto userDto) throws SQLException {
         User newUser = new User();
+        newUser.setUsername(userDto.getUsername());
+        newUser.setAge(userDto.getAge());
+        newUser.setRole(userDto.getRole() != null ? userDto.getRole() : "USER");
+        newUser.setEmail(userDto.getEmail());
+
         return userRepository.save(newUser);
     }
 
