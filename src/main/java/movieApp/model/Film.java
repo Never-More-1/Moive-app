@@ -1,14 +1,13 @@
 package movieApp.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "films")
 public class Film {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Используйте IDENTITY
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "title", nullable = false, length = 255)
@@ -21,7 +20,7 @@ public class Film {
     private String director;
 
     @Column(name = "rating")
-    private Double rating; // Средний рейтинг из отзывов
+    private Double rating;
 
     public Film() {
     }

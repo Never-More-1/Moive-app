@@ -1,8 +1,11 @@
 package movieApp.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "movie_user")
 public class User {

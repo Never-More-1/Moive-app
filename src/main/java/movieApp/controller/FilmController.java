@@ -54,6 +54,7 @@ public class FilmController {
         }
     }
 
+    //update
     @PutMapping("/update/user/{userId}/film/{filmId}")
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody FilmUpdateDto filmUpdateDto,
                                            @PathVariable("userId") int userId,
@@ -67,6 +68,7 @@ public class FilmController {
         return ResponseEntity.status(HttpStatus.CREATED).body(updatedFilm);
     }
 
+    //delete
     @DeleteMapping("/delete/user/{userId}/film/{filmId}")
     public ResponseEntity<Film> deleteFilm(@PathVariable("userId") int userId,
                                            @PathVariable("filmId") int filmId ) {

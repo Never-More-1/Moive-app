@@ -19,12 +19,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
-
-        return userRepository.findAll();
-    }
-
-    //Create
+    //create
     public User addUser(UserCreateDto userDto) throws SQLException {
         User newUser = new User();
         newUser.setUsername(userDto.getUsername());
@@ -35,12 +30,16 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    //Read
+    //read
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
     public Optional<User> getUserById(int id) {
         return userRepository.findById(id);
     }
 
-    //Update
+    //update
     public User updateUserById(int id, UserUpdateDto userUpdateDto) {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         existingUser.setUsername(userUpdateDto.getUsername());
@@ -51,7 +50,7 @@ public class UserService {
         return userRepository.save(existingUser);
     }
 
-    //Delete
+    //delete
     public boolean removeUserById(int id) throws SQLException {
         if (getUserById(id).isEmpty()) {
             throw new UserNotFoundException(id);

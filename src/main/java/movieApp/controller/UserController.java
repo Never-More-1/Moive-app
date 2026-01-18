@@ -33,7 +33,7 @@ public class UserController {
         return ResponseEntity.ok(allUsers);
     }
 
-    //Create
+    //create
     @PostMapping()
     public ResponseEntity<HttpStatusCode> addUser(@RequestBody UserCreateDto user) throws SQLException {
         User savedUser = userService.addUser(user);
@@ -43,7 +43,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
-    //Read
+    //read
     @GetMapping("/id/{id}")
     public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
         Optional<User> user = userService.getUserById(id);
@@ -53,7 +53,7 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    //Update
+    //update
     @PutMapping("/id/{id}")
     public ResponseEntity<?> updateUserById(@RequestBody UserUpdateDto userUpdateDto,
                                             @PathVariable("id") int id) {
@@ -66,7 +66,7 @@ public class UserController {
     }
 
 
-    //Delete
+    //delete
     @DeleteMapping("/id/{id}")
     public ResponseEntity<HttpStatusCode> deleteUserById(@PathVariable("id") int id) throws SQLException {
         if (userService.removeUserById(id)) {

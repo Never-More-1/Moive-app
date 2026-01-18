@@ -4,7 +4,6 @@ import movieApp.exception.AccessDeniedException;
 import movieApp.exception.FilmAlreadyExistException;
 import movieApp.exception.FilmNotFoundException;
 import movieApp.model.Film;
-import movieApp.model.User;
 import movieApp.model.dto.filmDto.FilmCreateDto;
 import movieApp.model.dto.filmDto.FilmUpdateDto;
 import movieApp.repository.FilmRepository;
@@ -17,14 +16,12 @@ import java.util.Optional;
 @Service
 public class FilmService {
     private final FilmRepository filmRepository;
-    private final UserRepository userRepository;
 
     public FilmService(FilmRepository filmRepository, UserRepository userRepository) {
         this.filmRepository = filmRepository;
-        this.userRepository = userRepository;
     }
 
-    // Create
+    //create
     public Film addFilm(FilmCreateDto filmCreateDto, Integer adminUserId) {
         if (adminUserId == null) {
             throw new AccessDeniedException();
@@ -43,7 +40,7 @@ public class FilmService {
         return filmRepository.save(newFilm);
     }
 
-    // Read
+    //read
     public List<Film> getAllFilms() {
         return filmRepository.findAll();
     }
@@ -56,7 +53,7 @@ public class FilmService {
             throw new FilmNotFoundException(id);
         }
     }
-
+    //update
     public Film updateFilm(Integer adminUserId, int filmId, FilmUpdateDto filmUpdateDto) {
         if (adminUserId == null) {
             throw new AccessDeniedException();
@@ -78,6 +75,7 @@ public class FilmService {
         return filmRepository.save(existingFilm);
     }
 
+    //delete
     public Film deleteFilm(Integer adminUserId, int filmId) {
         if (adminUserId == null) {
             throw new AccessDeniedException();

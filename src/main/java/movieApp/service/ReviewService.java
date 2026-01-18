@@ -27,9 +27,8 @@ public class ReviewService {
         this.userRepository = userRepository;
         this.filmRepository = filmRepository;
     }
-    // CRUD операции
 
-    //Create
+    //create
     public Review addReview(ReviewCreateDto reviewCreateDto) {
         User user = userRepository.findById(reviewCreateDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(reviewCreateDto.getUserId()));
@@ -58,17 +57,17 @@ public class ReviewService {
         return savedReview;
     }
 
-    //Read
+    //read
     public List<Review> getReviewsByUserId(int userId) {
         if (!userRepository.existsById(userId)) {
-            throw new RuntimeException("Пользователь не найден");
+            throw new UserNotFoundException(userId);
         }
         return reviewRepository.findByUserId(userId);
     }
 
     public List<Review> getReviewsByFilmId(int filmId) {
         if (!filmRepository.existsById(filmId)) {
-            throw new RuntimeException("Фильм не найден");
+            throw new FilmNotFoundException(filmId);
         }
         return reviewRepository.findByFilmId(filmId);
     }
@@ -84,7 +83,15 @@ public class ReviewService {
         return reviewRepository.countByUserId(userId);
     }
 
-    //Update
+    public Double getAverageRatingByFilmId(int filmId) {
+        if (!filmRepository.existsById(filmId)) {
+            throw new FilmNotFoundException(filmId);
+        }
+        Double average = reviewRepository.findAverageRatingByFilmId(filmId);
+        return average != null ? Math.round(average * 10.0) / 10.0 : 0.0; // Округление до 1 знака
+    }
+
+    //update
     public Review updateReviewByUserAndFilm(int userId, int filmId, ReviewUpdateDto reviewUpdateDto) {
         Review existingReview = reviewRepository.findByUserIdAndFilmId(userId, filmId)
                 .orElseThrow(() -> new ReviewNotFoundException());
@@ -108,7 +115,7 @@ public class ReviewService {
         }
     }
 
-//Delete
+//delete
     public boolean removeReviewByUserAndFilm(int userId, int filmId) {
         Optional<Review> review = reviewRepository.findByUserIdAndFilmId(userId, filmId);
         if (review.isPresent()) {
@@ -117,13 +124,5 @@ public class ReviewService {
             return true;
         }
         return false;
-    }
-
-    public Double getAverageRatingByFilmId(int filmId) {
-        if (!filmRepository.existsById(filmId)) {
-            throw new FilmNotFoundException(filmId);
-        }
-        Double average = reviewRepository.findAverageRatingByFilmId(filmId);
-        return average != null ? Math.round(average * 10.0) / 10.0 : 0.0; // Округление до 1 знака
     }
 }
