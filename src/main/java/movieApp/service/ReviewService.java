@@ -3,7 +3,6 @@ package movieApp.service;
 import movieApp.exception.*;
 import movieApp.model.Film;
 import movieApp.model.Review;
-import movieApp.model.User;
 import movieApp.model.dto.reviewDto.ReviewCreateDto;
 import movieApp.model.dto.reviewDto.ReviewUpdateDto;
 import movieApp.repository.FilmRepository;
@@ -30,16 +29,18 @@ public class ReviewService {
 
     //create
     public Review addReview(ReviewCreateDto reviewCreateDto) {
-        User user = userRepository.findById(reviewCreateDto.getUserId())
-                .orElseThrow(() -> new UserNotFoundException(reviewCreateDto.getUserId()));
-        if ("USER".equalsIgnoreCase(user.getRole())) {
-            throw new AccessDeniedException();
+        // Удалите этот код с Security, проверяйте через UserRepository
+        if (!userRepository.existsById(reviewCreateDto.getUserId())) {
+            throw new UserNotFoundException(reviewCreateDto.getUserId());
         }
+
         Film film = filmRepository.findById(reviewCreateDto.getFilmId())
                 .orElseThrow(() -> new FilmNotFoundException(reviewCreateDto.getFilmId()));
+
         if (reviewRepository.existsByUserIdAndFilmId(reviewCreateDto.getUserId(), reviewCreateDto.getFilmId())) {
             throw new RuntimeException("Вы уже оставляли отзыв на этот фильм");
         }
+
         if (reviewCreateDto.getRating() < 1 || reviewCreateDto.getRating() > 10) {
             throw new RuntimeException("Рейтинг должен быть от 1 до 10");
         }
@@ -51,7 +52,6 @@ public class ReviewService {
         newReview.setReviewText(reviewCreateDto.getReviewText());
 
         Review savedReview = reviewRepository.save(newReview);
-
         updateFilmAverageRating(reviewCreateDto.getFilmId());
 
         return savedReview;

@@ -24,8 +24,6 @@ public class UserService {
         User newUser = new User();
         newUser.setUsername(userDto.getUsername());
         newUser.setAge(userDto.getAge());
-        newUser.setRole(userDto.getRole() != null ? userDto.getRole() : "USER");
-        newUser.setEmail(userDto.getEmail());
 
         return userRepository.save(newUser);
     }
@@ -44,8 +42,6 @@ public class UserService {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         existingUser.setUsername(userUpdateDto.getUsername());
         existingUser.setAge(userUpdateDto.getAge());
-        existingUser.setRole(userUpdateDto.getRole());
-        existingUser.setEmail(userUpdateDto.getEmail());
 
         return userRepository.save(existingUser);
     }

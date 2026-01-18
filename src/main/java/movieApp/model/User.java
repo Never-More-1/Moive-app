@@ -1,50 +1,34 @@
 package movieApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
+@Entity(name = "users")
 @Data
-@Entity
-@Table(name = "movie_user")
+@EqualsAndHashCode(exclude = "security")
+@ToString(exclude = "security")
+@Component
 public class User {
 
     @Id
-    @SequenceGenerator(
-            name = "user_generator",
-            sequenceName = "movie_user_id_seq",
-            allocationSize = 1
-    )
+    @SequenceGenerator(name = "user_generator", sequenceName = "movie_user_id_seq", allocationSize = 1)
     @GeneratedValue(generator = "user_generator")
     private Integer id;
 
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(name = "username")
     private String username;
+    private int age;
+    private LocalDateTime created_at;
 
-    @Column(name = "age", nullable = false)
-    private Integer age;
-
-    @Column(name = "role", nullable = false)
-    private String role;
-
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    public User() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public User(String username, Integer age, String role, String email) {
-        this.username = username;
-        this.age = age;
-        this.role = role;
-        this.email = email;
-        this.createdAt = LocalDateTime.now();
-    }
+    @JsonIgnore //не учитывает это поле в JSON
+    @OneToOne(optional = false, mappedBy = "user", cascade = CascadeType.ALL)
+    private Security security;
 
     public Integer getId() {
         return id;
@@ -62,35 +46,27 @@ public class User {
         this.username = username;
     }
 
-    public Integer getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(Integer age) {
+    public void setAge(int age) {
         this.age = age;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public LocalDateTime getCreatedAt() {
-        return createdAt;
+        return created_at;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCreatedAt(LocalDateTime created_at) {
+        this.created_at = created_at;
+    }
+
+    public Security getSecurity() {
+        return security;
+    }
+
+    public void setSecurity(Security security) {
+        this.security = security;
     }
 }
