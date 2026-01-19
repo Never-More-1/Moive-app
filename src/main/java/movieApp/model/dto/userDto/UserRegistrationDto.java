@@ -6,13 +6,32 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+
 @Component
 public class UserRegistrationDto {
 
     private String username; // Это поле должно быть
     private String password;
-    private Integer age;
+    private String email;
+    private int age;
+    private LocalDateTime createdAt;
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getUsername() {
         return username;
@@ -30,7 +49,7 @@ public class UserRegistrationDto {
         this.password = password;
     }
 
-    public Integer getAge() {
+    public int getAge() {
         return age;
     }
 

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Entity(name = "users")
+@Entity(name = "movie_user")
 @Data
 @EqualsAndHashCode(exclude = "security")
 @ToString(exclude = "security")
@@ -23,7 +23,7 @@ public class User {
 
     @Column(name = "username")
     private String username;
-    private int age;
+    private Integer age;
     private LocalDateTime created_at;
 
     @JsonIgnore //не учитывает это поле в JSON

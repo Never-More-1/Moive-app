@@ -45,30 +45,32 @@ public class SecurityService {
             noRollbackFor = {UsernameExistsException.class},
             isolation = Isolation.READ_COMMITTED)
     public boolean registration(UserRegistrationDto userRegistrationDto) throws UsernameExistsException {
-        log.info("Registering user {}", userRegistrationDto.getUsername());
+        //log.info("Registering user {}", userRegistrationDto.getUsername());
 
         if (isUsernameUsed(userRegistrationDto.getUsername())) {
             throw new UsernameExistsException(userRegistrationDto.getUsername());
         }
 
         try {
-            // Исправьте - у User нет метода setUsername(userRegistrationDto.getFirstName())
             User user = new User();
-            user.setUsername(userRegistrationDto.getUsername()); // Используйте getUsername()
+            user.setUsername(userRegistrationDto.getUsername());
             user.setAge(userRegistrationDto.getAge());
-            user.setCreatedAt(LocalDateTime.now());
+
             userRepository.save(user);
 
             Security security = new Security();
             security.setUser(user);
-            security.setLogin(userRegistrationDto.getUsername());
+            security.setUsername(userRegistrationDto.getUsername());
             security.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
-            security.setRole(Role.USER);
+            security.setEmail(userRegistrationDto.getEmail());
+            security.setAge(userRegistrationDto.getAge());
+            security.setCreatedAt(userRegistrationDto.getCreatedAt());
 
+            security.setRole(Role.USER);
             securityRepository.save(security);
             return true;
         } catch (Exception e) {
-            log.error("Registration failed: {}", e.getMessage(), e);
+            //log.error("Registration failed: {}", e.getMessage(), e);
             throw new RuntimeException("Registration failed", e);
         }
     }
@@ -85,7 +87,7 @@ public class SecurityService {
     }
 
     public boolean isUsernameUsed(String username) {
-        return securityRepository.existsByLogin(username);
+        return securityRepository.existsByUsername(username);
     }
 
     public List<movieApp.model.Security> getAllSecuritiesByRole(String role) {
@@ -93,7 +95,7 @@ public class SecurityService {
     }
 
     public Optional<String> generateJwt(AuthRequest request) throws WrongPasswordException {
-        Optional<Security> security = securityRepository.getByLogin(request.getUsername());
+        Optional<Security> security = securityRepository.getByUsername(request.getUsername());
         if (security.isEmpty()) {
             throw new UsernameNotFoundException(request.getUsername());
         }
@@ -102,6 +104,6 @@ public class SecurityService {
             throw new WrongPasswordException(request.getPassword());
         }
 
-        return Optional.ofNullable(jwtUtils.generateToken(security.get().getLogin()));
+        return Optional.ofNullable(jwtUtils.generateToken(security.get().getUsername()));
     }
 }

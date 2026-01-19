@@ -82,7 +82,7 @@ public class SecurityController {
             List<String> errMessages = new ArrayList<>();
 
             for (ObjectError objectError : bindingResult.getAllErrors()) {
-                log.warn(objectError.toString());
+                //log.warn(objectError.toString());
                 errMessages.add(objectError.getDefaultMessage());
             }
             throw new ValidationException(String.valueOf(errMessages));

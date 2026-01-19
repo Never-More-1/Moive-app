@@ -12,15 +12,14 @@ import java.util.Optional;
 
 @Repository
 public interface SecurityRepository extends JpaRepository<Security, Integer> {
-    boolean existsByLogin(String login);
+    boolean existsByUsername(String login);
 
     @Query(nativeQuery = true, value = "SELECT * FROM security WHERE role = :roleParam")
     List<Security> customFindByRole(String roleParam);
 
-    Optional<Security> getByLogin(String login); // Этот метод есть
+    Optional<Security> getByUsername(String login);
 
-    // Добавьте этот метод если его нет
-    Optional<Security> findByLogin(String login); // Spring Data может создать его автоматически
+    Optional<Security> findByUsername(String login);
 
     @Transactional
     @Modifying

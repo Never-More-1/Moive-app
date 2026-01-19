@@ -53,6 +53,15 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/myself")
+    public ResponseEntity<User> getMyself() {
+        Optional<User> user = userService.getMyself();
+        if (user.isEmpty()) {
+            throw new UserNotFoundException(-1);
+        }
+        return ResponseEntity.ok(user.get());
+    }
+
     //update
     @PutMapping("/id/{id}")
     public ResponseEntity<?> updateUserById(@RequestBody UserUpdateDto userUpdateDto,

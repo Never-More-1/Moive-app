@@ -1,10 +1,7 @@
 package movieApp.security;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.SystemProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +12,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class JwtUtils {
 
-    @Value("${jwt.expiration}")
-    private String jwtExpirationMinutes;
+    @Value("${jwt.expiration:1440}")
+    private int jwtExpirationMinutes;  // This is String, but you're parsing it to int
 
     @Value("${jwt.secret}")
     private String secret;
@@ -24,22 +21,21 @@ public class JwtUtils {
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
-                .setExpiration(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(Integer.parseInt(jwtExpirationMinutes))))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() +
+                        TimeUnit.MINUTES.toMillis(jwtExpirationMinutes)))
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
 
     public boolean validateToken(String token) {
-        //log.info("IN JwtUtils::validateToken");
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
-        } catch (JwtException e){
-            //log.error(e.getMessage());
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            //log.error("Invalid JWT token: {}", e.getMessage());
             return false;
-        } finally {
-            //log.info("IN JwtUtils::validateToken");
         }
-        return true;
     }
 
     public String getUsernameFromToken(String token) {

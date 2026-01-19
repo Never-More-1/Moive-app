@@ -1,10 +1,14 @@
 package movieApp.service;
 
 import movieApp.exception.UserNotFoundException;
+import movieApp.model.Security;
 import movieApp.model.User;
 import movieApp.model.dto.userDto.UserCreateDto;
 import movieApp.model.dto.userDto.UserUpdateDto;
+import movieApp.repository.SecurityRepository;
 import movieApp.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -13,10 +17,12 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+    @Autowired
     private UserRepository userRepository;
+    private SecurityRepository securityRepository;
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(SecurityRepository securityRepository) {
+        this.securityRepository = securityRepository;
     }
 
     //create
@@ -35,6 +41,15 @@ public class UserService {
 
     public Optional<User> getUserById(int id) {
         return userRepository.findById(id);
+    }
+
+    public Optional<User> getMyself() {
+        String userLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Security> userSecurity = securityRepository.getByUsername(userLogin);
+        if (userSecurity.isPresent()) {
+            return userRepository.findById(userSecurity.get().getUser().getId());
+        }
+        return Optional.empty();
     }
 
     //update
