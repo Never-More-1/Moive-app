@@ -30,18 +30,14 @@ public class SecurityConfig {
                         auth.requestMatchers(HttpMethod.POST, "/security/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/security/jwt").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/user").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/user").hasRole(Role.ADMIN.name())
                                 .requestMatchers(HttpMethod.GET, "/user/sort/**").hasRole(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.GET, "/user/myself").hasAnyRole(Role.USER.name(), Role.ADMIN.name())
+                                .requestMatchers(HttpMethod.GET, "/user/myself").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/user/**").permitAll()
                                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .userDetailsService(customUserDetailService)
                 .build();
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .authorizeHttpRequests(auth ->
-//                        auth.anyRequest().permitAll() // ВСЕ запросы разрешены!
-//                )
-//                .build();
     }
 
     @Bean

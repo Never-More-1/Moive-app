@@ -19,9 +19,9 @@ public class Security {
     @Id
     @SequenceGenerator(name = "security_generator", sequenceName = "security_id_seq", allocationSize = 1)
     @GeneratedValue(generator = "security_generator")
+    @JsonIgnore
     private Integer id;
 
-    @JsonIgnore
     private String username;
 
     @JsonIgnore

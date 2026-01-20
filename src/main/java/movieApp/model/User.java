@@ -19,16 +19,36 @@ public class User {
     @Id
     @SequenceGenerator(name = "user_generator", sequenceName = "movie_user_id_seq", allocationSize = 1)
     @GeneratedValue(generator = "user_generator")
+    @JsonIgnore
     private Integer id;
 
     @Column(name = "username")
     private String username;
+    private String password;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    private String email;
     private Integer age;
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
     @JsonIgnore //не учитывает это поле в JSON
     @OneToOne(optional = false, mappedBy = "user", cascade = CascadeType.ALL)
     private Security security;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public Integer getId() {
         return id;
@@ -55,11 +75,11 @@ public class User {
     }
 
     public LocalDateTime getCreatedAt() {
-        return created_at;
+        return createdAt;
     }
 
     public void setCreatedAt(LocalDateTime created_at) {
-        this.created_at = created_at;
+        this.createdAt = created_at;
     }
 
     public Security getSecurity() {

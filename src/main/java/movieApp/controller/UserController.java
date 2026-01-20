@@ -33,20 +33,20 @@ public class UserController {
         return ResponseEntity.ok(allUsers);
     }
 
-    //create
-    @PostMapping()
-    public ResponseEntity<HttpStatusCode> addUser(@RequestBody UserCreateDto user) throws SQLException {
-        User savedUser = userService.addUser(user);
-        if (savedUser != null) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.status(HttpStatus.CONFLICT).build();
-    }
+//    //create
+//    @PostMapping()
+//    public ResponseEntity<HttpStatusCode> addUser(@RequestBody UserCreateDto user) throws SQLException {
+//        User savedUser = userService.addUser(user);
+//        if (savedUser != null) {
+//            return ResponseEntity.noContent().build();
+//        }
+//        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+//    }
 
     //read
-    @GetMapping("/id/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
-        Optional<User> user = userService.getUserById(id);
+    @GetMapping("/username/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
+        Optional<User> user = userService.getUserByUsername(username);
         if (user.isPresent()) {
             return ResponseEntity.ok(user.get());
         }

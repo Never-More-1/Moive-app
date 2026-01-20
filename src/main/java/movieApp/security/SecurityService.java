@@ -55,7 +55,7 @@ public class SecurityService {
             User user = new User();
             user.setUsername(userRegistrationDto.getUsername());
             user.setAge(userRegistrationDto.getAge());
-
+            user.setCreatedAt(LocalDateTime.now());
             userRepository.save(user);
 
             Security security = new Security();
@@ -64,7 +64,7 @@ public class SecurityService {
             security.setPassword(bCryptPasswordEncoder.encode(userRegistrationDto.getPassword()));
             security.setEmail(userRegistrationDto.getEmail());
             security.setAge(userRegistrationDto.getAge());
-            security.setCreatedAt(userRegistrationDto.getCreatedAt());
+            security.setCreatedAt(LocalDateTime.now());
 
             security.setRole(Role.USER);
             securityRepository.save(security);

@@ -21,7 +21,6 @@ public class CustomUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Имя параметра может быть любым, но метод ДОЛЖЕН называться loadUserByUsername
         Optional<Security> securityOptional = securityRepository.getByUsername(username);
         if (securityOptional.isEmpty()) {
             throw new UsernameNotFoundException("User not found with login: " + username);
@@ -29,7 +28,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
         Security security = securityOptional.get();
         return User
-                .withUsername(security.getUsername()) // Здесь передаем login как username для Spring Security
+                .withUsername(security.getUsername())
                 .password(security.getPassword())
                 .roles(security.getRole().name())
                 .build();

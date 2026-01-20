@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,7 @@ public class UserService {
         User newUser = new User();
         newUser.setUsername(userDto.getUsername());
         newUser.setAge(userDto.getAge());
+        newUser.setCreatedAt(LocalDateTime.now());
 
         return userRepository.save(newUser);
     }
@@ -41,6 +43,11 @@ public class UserService {
 
     public Optional<User> getUserById(int id) {
         return userRepository.findById(id);
+    }
+
+    public Optional<User> getUserByUsername(String username){
+        Optional<Security> userSecurity = securityRepository.getByUsername(username);
+        return userRepository.findById(userSecurity.get().getUser().getId());
     }
 
     public Optional<User> getMyself() {
@@ -56,7 +63,10 @@ public class UserService {
     public User updateUserById(int id, UserUpdateDto userUpdateDto) {
         User existingUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         existingUser.setUsername(userUpdateDto.getUsername());
+        existingUser.setPassword(userUpdateDto.getPassword());
         existingUser.setAge(userUpdateDto.getAge());
+        existingUser.setEmail(userUpdateDto.getEmail());
+        existingUser.setCreatedAt(LocalDateTime.now());
 
         return userRepository.save(existingUser);
     }
