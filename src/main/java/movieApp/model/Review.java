@@ -8,36 +8,40 @@ import java.time.LocalDateTime;
 public class Review {
 
     @Id
-    @SequenceGenerator(
-            name = "review_generator",
-            sequenceName = "review_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(generator = "review_generator")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "user_id", nullable = false)
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "film_id", nullable = false)
+    private Film film; // Связь с фильмом
 
-    @Column(name = "film_id", nullable = false)
-    private Integer filmId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // Связь с пользователем
 
-    @Column(name = "review_text", nullable = false, columnDefinition = "TEXT")
-    private String reviewText;
+    @Column(nullable = false, length = 2000)
+    private String text;
 
-    @Column(name = "rating", nullable = false)
-    private Double rating; // от 1 до 10
+    @Column(nullable = false)
+    private Double rating; // например, от 1 до 5
 
-    public Review(){
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    // Конструкторы
+    public Review() {
+        this.createdAt = LocalDateTime.now();
     }
 
-    public Review(Integer userId, Integer filmId, String reviewText, Integer rating) {
-        this.userId = userId;
-        this.filmId = filmId;
-        this.reviewText = reviewText;
-        setRating(rating);
+    public Review(Film film, User user, String text, Double rating) {
+        this.film = film;
+        this.user = user;
+        this.text = text;
+        this.rating = rating;
+        this.createdAt = LocalDateTime.now();
     }
 
+    // Геттеры и сеттеры
     public Integer getId() {
         return id;
     }
@@ -46,37 +50,43 @@ public class Review {
         this.id = id;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Film getFilm() {
+        return film;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setFilm(Film film) {
+        this.film = film;
     }
 
-    public Integer getFilmId() {
-        return filmId;
+    public User getUser() {
+        return user;
     }
 
-    public void setFilmId(Integer filmId) {
-        this.filmId = filmId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public String getReviewText() {
-        return reviewText;
+    public String getText() {
+        return text;
     }
 
-    public void setReviewText(String reviewText) {
-        this.reviewText = reviewText;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public Double getRating() {
         return rating;
     }
 
-    public void setRating(double rating) {
-        if (rating < 1) rating = 1;
-        if (rating > 10) rating = 10;
+    public void setRating(Double rating) {
         this.rating = rating;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

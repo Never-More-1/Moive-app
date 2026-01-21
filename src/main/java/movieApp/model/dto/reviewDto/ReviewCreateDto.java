@@ -4,25 +4,16 @@ import lombok.Data;
 
 @Data
 public class ReviewCreateDto {
-    private int userId;
-    private int filmId;
+    private int filmTitle;
     private String reviewText;
     private double rating; // от 1 до 10
 
-    public int getUserId() {
-        return userId;
+    public int getFilmTitle() {
+        return filmTitle;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public int getFilmId() {
-        return filmId;
-    }
-
-    public void setFilmId(int filmId) {
-        this.filmId = filmId;
+    public void setFilmTitle(int filmTitle) {
+        this.filmTitle = filmTitle;
     }
 
     public String getReviewText() {

@@ -29,8 +29,7 @@
 //
 //    //create
 //    public Review addReview(ReviewCreateDto reviewCreateDto) {
-//        // Удалите этот код с Security, проверяйте через UserRepository
-//        if (!userRepository.existsById(reviewCreateDto.getUserId())) {
+//        if (!userRepository.existsById() {
 //            throw new UserNotFoundException(reviewCreateDto.getUserId());
 //        }
 //
@@ -46,8 +45,8 @@
 //        }
 //
 //        Review newReview = new Review();
-//        newReview.setUserId(reviewCreateDto.getUserId());
-//        newReview.setFilmId(reviewCreateDto.getFilmId());
+//        newReview.setUser(reviewCreateDto.getUser());
+//        newReview.setFilm(reviewCreateDto.getFilm());
 //        newReview.setRating(reviewCreateDto.getRating());
 //        newReview.setReviewText(reviewCreateDto.getReviewText());
 //
@@ -72,8 +71,8 @@
 //        return reviewRepository.findByFilmId(filmId);
 //    }
 //
-//    public Optional<Review> getReviewByUserAndFilm(int userId, int filmId) {
-//        return reviewRepository.findByUserIdAndFilmId(userId, filmId);
+//    public Optional<Review> getReviewByUserAndFilm(int filmId) {
+//        return reviewRepository.findByReviewFilmId(filmId);
 //    }
 //
 //    public int getUserReviewCount(int userId) {
@@ -93,7 +92,7 @@
 //
 //    //update
 //    public Review updateReviewByUserAndFilm(int userId, int filmId, ReviewUpdateDto reviewUpdateDto) {
-//        Review existingReview = reviewRepository.findByUserIdAndFilmId(userId, filmId)
+//        Review existingReview = reviewRepository.findByReviewFilmId(filmId)
 //                .orElseThrow(() -> new ReviewNotFoundException());
 //        if (reviewUpdateDto.getRating() < 1 || reviewUpdateDto.getRating() > 10) {
 //            throw new ValidRatingException();
@@ -115,9 +114,9 @@
 //        }
 //    }
 //
-////delete
+//    //delete
 //    public boolean removeReviewByUserAndFilm(int userId, int filmId) {
-//        Optional<Review> review = reviewRepository.findByUserIdAndFilmId(userId, filmId);
+//        Optional<Review> review = reviewRepository.findByReviewFilmId(filmId);
 //        if (review.isPresent()) {
 //            reviewRepository.deleteById(review.get().getId());
 //            updateFilmAverageRating(filmId);

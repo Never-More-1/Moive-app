@@ -25,18 +25,20 @@ public class Favorite {
     private Film film;
 
     @Column(name = "added_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt; // ИЗМЕНИТЕ НАЗВАНИЕ ПОЛЯ НА createdAt
+    private LocalDateTime createdAt;
 
     public Favorite() {
         this.createdAt = LocalDateTime.now();
     }
 
+    // ОБНОВЛЕННЫЙ КОНСТРУКТОР - принимаем User, а не username
     public Favorite(User user, Film film) {
         this.user = user;
         this.film = film;
         this.createdAt = LocalDateTime.now();
     }
 
+    // Геттеры и сеттеры...
     public Integer getId() {
         return id;
     }

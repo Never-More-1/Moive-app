@@ -21,8 +21,6 @@ public class FilmCreateDto {
     @Size(min = 2, max = 100, message = "Имя режиссера должно быть от 2 до 100 символов")
     private String director;
 
-    private Integer adminUserId;
-
     public FilmCreateDto() {}
 
     public FilmCreateDto(String title, Integer releaseYear, String director) {
@@ -35,7 +33,6 @@ public class FilmCreateDto {
         this.title = title;
         this.releaseYear = releaseYear;
         this.director = director;
-        this.adminUserId = adminUserId;
     }
 
     public String getTitle() {
@@ -62,11 +59,4 @@ public class FilmCreateDto {
         this.director = director;
     }
 
-    public Integer getAdminUserId() {
-        return adminUserId;
-    }
-
-    public void setAdminUserId(Integer adminUserId) {
-        this.adminUserId = adminUserId;
-    }
 }

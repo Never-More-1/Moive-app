@@ -77,9 +77,8 @@
 //
 //    @GetMapping("/user/{userId}/film/{filmId}")
 //    public ResponseEntity<Review> getUserFilmReview(
-//            @PathVariable("userId") int userId,
 //            @PathVariable("filmId") int filmId) {
-//        return reviewService.getReviewByUserAndFilm(userId, filmId)
+//        return reviewService.getReviewByUserAndFilm(filmId)
 //                .map(ResponseEntity::ok)
 //                .orElse(ResponseEntity.notFound().build());
 //    }

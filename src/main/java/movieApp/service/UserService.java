@@ -147,7 +147,6 @@ public class UserService {
         }
         Security security = securityOptional.get();
         User user = security.getUser();
-        favoriteRepository.deleteByUserId(user.getId());
         securityRepository.delete(security);
         userRepository.delete(user);
         return securityRepository.getByUsername(username).isEmpty() &&

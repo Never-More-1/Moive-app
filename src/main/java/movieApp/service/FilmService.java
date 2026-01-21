@@ -22,10 +22,7 @@ public class FilmService {
     }
 
     //create
-    public Film addFilm(FilmCreateDto filmCreateDto, Integer adminUserId) {
-        if (adminUserId == null) {
-            throw new AccessDeniedException();
-        }
+    public Film addFilm(FilmCreateDto filmCreateDto) {
 
         if (filmRepository.existsByTitle(filmCreateDto.getTitle())) {
             throw new FilmAlreadyExistException(filmCreateDto.getTitle());
@@ -54,10 +51,7 @@ public class FilmService {
         }
     }
     //update
-    public Film updateFilm(Integer adminUserId, int filmId, FilmUpdateDto filmUpdateDto) {
-        if (adminUserId == null) {
-            throw new AccessDeniedException();
-        }
+    public Film updateFilm(int filmId, FilmUpdateDto filmUpdateDto) {
 
         Film existingFilm = filmRepository.findById(filmId)
                 .orElseThrow(() -> new FilmNotFoundException(filmId));
@@ -76,10 +70,7 @@ public class FilmService {
     }
 
     //delete
-    public Film deleteFilm(Integer adminUserId, int filmId) {
-        if (adminUserId == null) {
-            throw new AccessDeniedException();
-        }
+    public Film deleteFilm(int filmId) {
         Film filmToDelete = filmRepository.findById(filmId)
                 .orElseThrow(() -> new FilmNotFoundException(filmId));
         filmRepository.deleteById(filmId);
