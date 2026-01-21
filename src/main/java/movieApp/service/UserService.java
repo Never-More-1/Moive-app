@@ -1,14 +1,19 @@
 package movieApp.service;
 
+import jakarta.transaction.Transactional;
 import movieApp.exception.UserNotFoundException;
+import movieApp.exception.UsernameExistException;
+import movieApp.model.Role;
 import movieApp.model.Security;
 import movieApp.model.User;
 import movieApp.model.dto.userDto.UserCreateDto;
 import movieApp.model.dto.userDto.UserUpdateDto;
+import movieApp.repository.FavoriteRepository;
 import movieApp.repository.SecurityRepository;
 import movieApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -20,11 +25,15 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
     private SecurityRepository securityRepository;
 
-    public UserService(SecurityRepository securityRepository) {
-        this.securityRepository = securityRepository;
-    }
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     //create
     public User addUser(UserCreateDto userDto) throws SQLException {
@@ -45,9 +54,12 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public Optional<User> getUserByUsername(String username){
+    public Optional<User> getUserByUsername(String username) {
         Optional<Security> userSecurity = securityRepository.getByUsername(username);
-        return userRepository.findById(userSecurity.get().getUser().getId());
+        if (userSecurity.isPresent()) {
+            return userRepository.findById(userSecurity.get().getUser().getId());
+        }
+        return Optional.empty();
     }
 
     public Optional<User> getMyself() {
@@ -60,24 +72,85 @@ public class UserService {
     }
 
     //update
-    public User updateUserById(int id, UserUpdateDto userUpdateDto) {
-        User existingUser = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-        existingUser.setUsername(userUpdateDto.getUsername());
-        existingUser.setPassword(userUpdateDto.getPassword());
-        existingUser.setAge(userUpdateDto.getAge());
-        existingUser.setEmail(userUpdateDto.getEmail());
-        existingUser.setCreatedAt(LocalDateTime.now());
+    @Transactional
+    public User updateUserByUsername(String username, UserUpdateDto userUpdateDto) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Security> currentUserSecurity = securityRepository.getByUsername(currentUsername);
 
-        return userRepository.save(existingUser);
+        if (currentUserSecurity.isEmpty()) {
+            throw new SecurityException("Пользователь не аутентифицирован");
+        }
+
+        Security currentUserSec = currentUserSecurity.get();
+        boolean isAdmin = currentUserSec.getRole() == Role.ADMIN;
+        boolean isOwner = currentUsername.equals(username);
+
+        if (!isAdmin && !isOwner) {
+            throw new SecurityException("У вас нет прав, чтобы обновлять этого пользователя");
+        }
+
+        Optional<Security> securityOptional = securityRepository.getByUsername(username);
+        if (securityOptional.isEmpty()) {
+            throw new UserNotFoundException(username);
+        }
+
+        Security security = securityOptional.get();
+        User user = security.getUser();
+
+        String newUsername = userUpdateDto.getUsername();
+        if (newUsername != null && !newUsername.equals(username)) {
+            Optional<Security> existingSecurity = securityRepository.getByUsername(newUsername);
+            if (existingSecurity.isPresent()) {
+                throw new IllegalArgumentException("Username " + newUsername + " уже занят");
+            }
+        }
+
+        user.setUsername(userUpdateDto.getUsername());
+        user.setAge(userUpdateDto.getAge());
+        user.setCreatedAt(LocalDateTime.now());
+        userRepository.save(user);
+
+        security.setUsername(userUpdateDto.getUsername());
+        security.setAge(userUpdateDto.getAge());
+        security.setEmail(userUpdateDto.getEmail());
+
+        if (userUpdateDto.getPassword() != null && !userUpdateDto.getPassword().isEmpty()) {
+            String encodedPassword = passwordEncoder.encode(userUpdateDto.getPassword());
+            security.setPassword(encodedPassword);
+        }
+
+        security.setCreatedAt(LocalDateTime.now());
+        securityRepository.save(security);
+
+        return user;
     }
 
     //delete
-    public boolean removeUserById(int id) throws SQLException {
-        if (getUserById(id).isEmpty()) {
-            throw new UserNotFoundException(id);
+    @Transactional
+    public boolean removeUserByUsername(String username) throws SQLException {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        Optional<Security> currentUserSecurity = securityRepository.getByUsername(currentUsername);
+
+        if (currentUserSecurity.isEmpty()) {
+            throw new SecurityException("Пользователь не аунтифицирован");
         }
-        userRepository.deleteById(id);
-        Optional<User> userFromDb = getUserById(id);
-        return userFromDb.isEmpty();
+        Security currentUserSec = currentUserSecurity.get();
+        boolean isAdmin = currentUserSec.getRole() == Role.ADMIN;
+        boolean isOwner = currentUsername.equals(username);
+
+        if (!isAdmin && !isOwner) {
+            throw new SecurityException("У вас нет прав, чтобы удалять этого пользователя");
+        }
+        Optional<Security> securityOptional = securityRepository.getByUsername(username);
+        if (securityOptional.isEmpty()) {
+            throw new UserNotFoundException(username);
+        }
+        Security security = securityOptional.get();
+        User user = security.getUser();
+        favoriteRepository.deleteByUserId(user.getId());
+        securityRepository.delete(security);
+        userRepository.delete(user);
+        return securityRepository.getByUsername(username).isEmpty() &&
+                userRepository.findByUsername(username).isEmpty();
     }
 }

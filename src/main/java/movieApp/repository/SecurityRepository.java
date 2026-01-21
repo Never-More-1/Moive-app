@@ -17,6 +17,9 @@ public interface SecurityRepository extends JpaRepository<Security, Integer> {
     @Query(nativeQuery = true, value = "SELECT * FROM security WHERE role = :roleParam")
     List<Security> customFindByRole(String roleParam);
 
+    @Query(nativeQuery = true, value = "SELECT * FROM security")
+    public List<Security> getAllUsers();
+
     Optional<Security> getByUsername(String login);
 
     Optional<Security> findByUsername(String login);

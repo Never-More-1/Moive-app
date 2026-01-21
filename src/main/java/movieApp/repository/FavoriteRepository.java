@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface FavoriteRepository extends JpaRepository<Favorite, Integer> {
     List<Favorite> findByUser(User user);
+    List<Favorite> deleteByUserId(int id);
     Optional<Favorite> findByUserAndFilm(User user, Film film);
     boolean existsByUserAndFilm(User user, Film film);
     int countByUserId(Integer userId);

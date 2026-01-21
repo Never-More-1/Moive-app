@@ -7,6 +7,7 @@ import movieApp.exception.UsernameExistsException;
 import movieApp.exception.WrongPasswordException;
 import movieApp.model.Role;
 import movieApp.model.Security;
+import movieApp.model.User;
 import movieApp.model.dto.authDto.AuthRequest;
 import movieApp.model.dto.authDto.AuthResponse;
 import movieApp.model.dto.userDto.UserRegistrationDto;
@@ -33,6 +34,15 @@ public class SecurityController {
     public SecurityController(SecurityService securityService, UserService userService) {
         this.securityService = securityService;
         this.userService = userService;
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<Security>> getAllUsers() {
+        List<Security> allUsers = securityService.getAllUsers();
+        if(allUsers.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(allUsers);
     }
 
     @PostMapping("/jwt")

@@ -1,7 +1,7 @@
 package movieApp.security;
 
-import movieApp.exception.ForbiddenException;
 import movieApp.exception.UserNotFoundException;
+import movieApp.exception.UsernameExistException;
 import movieApp.exception.UsernameExistsException;
 import movieApp.exception.WrongPasswordException;
 import movieApp.model.Role;
@@ -39,6 +39,10 @@ public class SecurityService {
         this.securityRepository = securityRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtUtils = jwtUtils;
+    }
+
+    public List<Security> getAllUsers() {
+        return securityRepository.findAll();
     }
 
     @Transactional(rollbackFor = {Exception.class},

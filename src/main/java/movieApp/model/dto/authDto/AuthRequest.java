@@ -4,11 +4,9 @@ import lombok.Data;
 
 @Data
 public class AuthRequest {
-    private String username; // или login, в зависимости от вашей системы
+    private String username;
     private String password;
 
-    // Если используете Lombok, геттеры/сеттеры не нужны
-    // Иначе добавьте:
     public String getUsername() {
         return username;
     }

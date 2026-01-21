@@ -2,7 +2,7 @@ package movieApp.exception;
 
 public class UsernameExistException extends Throwable {
 
-    private String username;
+    private final String username;
     public UsernameExistException(String username) {
         super("Пользователь " + username + " уже существует");
         this.username = username;
