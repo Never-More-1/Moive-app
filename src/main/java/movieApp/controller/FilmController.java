@@ -36,10 +36,10 @@ public class FilmController {
         return ResponseEntity.ok(filmService.getAllFilms());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Film> getFilmById(@PathVariable("id") int id) {
+    @GetMapping("/{title}")
+    public ResponseEntity<Film> getFilm(@PathVariable("title") String title) {
         try {
-            Film film = filmService.getFilmById(id);
+            Film film = filmService.getFilmByTitle(title);
             return ResponseEntity.ok(film);
         } catch (FilmNotFoundException e) {
             return ResponseEntity.notFound().build();

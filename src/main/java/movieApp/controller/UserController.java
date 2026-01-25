@@ -63,7 +63,6 @@ public class UserController {
         }
     }
 
-
     //delete
     @DeleteMapping("/username/{username}")
     public ResponseEntity<HttpStatusCode> deleteUserByUsername(@PathVariable("username") String username) throws SQLException {

@@ -3,6 +3,7 @@ package movieApp.service;
 import jakarta.transaction.Transactional;
 import movieApp.exception.*;
 import movieApp.model.*;
+import movieApp.model.dto.filmDto.FilmUpdateDto;
 import movieApp.model.dto.reviewDto.ReviewCreateDto;
 import movieApp.model.dto.reviewDto.ReviewUpdateDto;
 import movieApp.model.dto.userDto.UserUpdateDto;
@@ -159,6 +160,20 @@ public class ReviewService {
         Review updatedReview = reviewRepository.save(review);
         updateFilmAverageRating(film.getId());
         return updatedReview;
+    }
+
+    public Film updateFilm(int filmId, FilmUpdateDto filmUpdateDto) {
+        Film existingFilm = filmRepository.findById(filmId)
+                .orElseThrow(() -> new FilmNotFoundException(filmId));
+        if (!existingFilm.getTitle().equals(filmUpdateDto.getTitle())) {
+            if (filmRepository.existsByTitle(filmUpdateDto.getTitle())) {
+                throw new FilmAlreadyExistException(filmUpdateDto.getTitle());
+            }
+        }
+        existingFilm.setTitle(filmUpdateDto.getTitle());
+        existingFilm.setReleaseYear(filmUpdateDto.getReleaseYear());
+        existingFilm.setDirector(filmUpdateDto.getDirector());
+        return filmRepository.save(existingFilm);
     }
 
     @Transactional

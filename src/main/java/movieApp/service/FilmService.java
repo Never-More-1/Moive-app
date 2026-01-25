@@ -42,30 +42,26 @@ public class FilmService {
         return filmRepository.findAll();
     }
 
-    public Film getFilmById(int id) {
-        Optional <Film> film = filmRepository.findById(id);
+    public Film getFilmByTitle(String title) {
+        Optional <Film> film = filmRepository.findByTitle(title);
         if (film.isPresent()) {
-            return filmRepository.findById(id).get();
+            return filmRepository.findByTitle(title).get();
         }else{
-            throw new FilmNotFoundException(id);
+            throw new FilmNotFoundException(title);
         }
     }
     //update
     public Film updateFilm(int filmId, FilmUpdateDto filmUpdateDto) {
-
         Film existingFilm = filmRepository.findById(filmId)
                 .orElseThrow(() -> new FilmNotFoundException(filmId));
-
         if (!existingFilm.getTitle().equals(filmUpdateDto.getTitle())) {
             if (filmRepository.existsByTitle(filmUpdateDto.getTitle())) {
                 throw new FilmAlreadyExistException(filmUpdateDto.getTitle());
             }
         }
-
         existingFilm.setTitle(filmUpdateDto.getTitle());
         existingFilm.setReleaseYear(filmUpdateDto.getReleaseYear());
         existingFilm.setDirector(filmUpdateDto.getDirector());
-
         return filmRepository.save(existingFilm);
     }
 
