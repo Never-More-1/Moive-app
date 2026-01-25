@@ -56,7 +56,7 @@ public class UserController {
     public ResponseEntity<?> updateUserByUsername(@RequestBody UserUpdateDto userUpdateDto,
                                             @PathVariable("username") String username) {
         try {
-            User updatedUser = userService.updateUserByUsername(username, userUpdateDto);
+            User updatedUser = userService.updateUser(username, userUpdateDto);
             return ResponseEntity.ok(updatedUser);
         } catch (UserNotFoundException e) {
             return ResponseEntity.notFound().build();

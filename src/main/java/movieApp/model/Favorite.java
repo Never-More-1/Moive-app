@@ -1,5 +1,6 @@
 package movieApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -14,10 +15,12 @@ public class Favorite {
             allocationSize = 1
     )
     @GeneratedValue(generator = "favorite_generator")
+    @JsonIgnore
     private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 
     @ManyToOne
@@ -31,14 +34,12 @@ public class Favorite {
         this.createdAt = LocalDateTime.now();
     }
 
-    // ОБНОВЛЕННЫЙ КОНСТРУКТОР - принимаем User, а не username
     public Favorite(User user, Film film) {
         this.user = user;
         this.film = film;
         this.createdAt = LocalDateTime.now();
     }
 
-    // Геттеры и сеттеры...
     public Integer getId() {
         return id;
     }

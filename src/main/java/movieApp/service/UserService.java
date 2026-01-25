@@ -12,6 +12,7 @@ import movieApp.repository.FavoriteRepository;
 import movieApp.repository.SecurityRepository;
 import movieApp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -73,11 +74,12 @@ public class UserService {
 
     //update
     @Transactional
-    public User updateUserByUsername(String username, UserUpdateDto userUpdateDto) {
-        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Security> currentUserSecurity = securityRepository.getByUsername(currentUsername);
+    public User updateUser(String username, UserUpdateDto userUpdateDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+        Optional<Security> currentUserSecurity = securityRepository.getByUsername(username);
 
-        if (currentUserSecurity.isEmpty()) {
+        if (authentication == null || !authentication.isAuthenticated()) {
             throw new SecurityException("Пользователь не аутентифицирован");
         }
 

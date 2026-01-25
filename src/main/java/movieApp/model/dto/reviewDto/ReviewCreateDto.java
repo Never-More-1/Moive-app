@@ -1,19 +1,23 @@
 package movieApp.model.dto.reviewDto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 
 @Data
 public class ReviewCreateDto {
-    private int filmTitle;
+    private int filmId;
     private String reviewText;
-    private double rating; // от 1 до 10
+    @Min(1)
+    @Max(10)
+    private Integer rating;
 
-    public int getFilmTitle() {
-        return filmTitle;
+    public int getFilmId() {
+        return filmId;
     }
 
-    public void setFilmTitle(int filmTitle) {
-        this.filmTitle = filmTitle;
+    public void setFilmId(int filmId) {
+        this.filmId = filmId;
     }
 
     public String getReviewText() {
@@ -24,11 +28,11 @@ public class ReviewCreateDto {
         this.reviewText = reviewText;
     }
 
-    public double getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(double rating) {
+    public void setRating(Integer rating) {
         if (rating < 1) rating = 1;
         if (rating > 10) rating = 10;
         this.rating = rating;

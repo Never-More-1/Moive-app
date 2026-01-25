@@ -51,22 +51,17 @@ public class FavoriteService {
     }
 
     // read
-    public List<Favorite> getUserFavorites() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+    public List<Favorite> findUserFavoritesByUsername(String username) {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
-
         return favoriteRepository.findByUser(user);
     }
 
-    public int countUserFavorites() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
+    public int countUserFavorites(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
+
         return favoriteRepository.countByUser(user);
     }
 

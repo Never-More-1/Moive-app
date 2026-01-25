@@ -1,110 +1,119 @@
-//package movieApp.controller;
+package movieApp.controller;
+
+import jakarta.validation.Valid;
+import movieApp.exception.UserNotFoundException;
+import movieApp.model.Review;
+import movieApp.model.dto.reviewDto.ReviewCreateDto;
+import movieApp.model.dto.reviewDto.ReviewUpdateDto;
+import movieApp.service.ReviewService;
+import org.apache.tomcat.util.http.parser.Authorization;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/reviews")
+public class ReviewController {
+    private final ReviewService reviewService;
+
+    public ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
+    }
+
+    // create
+    @PostMapping
+    public ResponseEntity<?> createReview(@Valid @RequestBody ReviewCreateDto reviewDto) {
+        try {
+            Review createdReview = reviewService.addReview(reviewDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdReview);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // read
+    @GetMapping("/myreviews")
+    public ResponseEntity<List<Review>> getMyReviews() {
+        try {
+            List<Review> reviews = reviewService.getMyReviews();
+            if (reviews.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }else{
+                return new ResponseEntity<>(reviews, HttpStatus.OK);
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<Review>> getUserReviews(@PathVariable("username") String username) {
+        try {
+            List<Review> reviews = reviewService.getReviewsByUsername(username);
+            if (reviews.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }else{
+                return new ResponseEntity<>(reviews, HttpStatus.OK);
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @GetMapping("/film/{filmTitle}")
+    public ResponseEntity<List<Review>> getFilmReviews(@PathVariable("filmTitle") String filmTitle) {
+        try {
+            List<Review> reviews = reviewService.getReviewsByFilmTitle(filmTitle);
+            return reviews.isEmpty() ?
+                    ResponseEntity.noContent().build() :
+                    ResponseEntity.ok(reviews);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    @GetMapping("/film/{filmId}/rating")
+    public ResponseEntity<Double> getFilmRating(@PathVariable("filmId") int filmId) {
+        try {
+            Double rating = reviewService.getAverageRatingByFilmId(filmId);
+            return ResponseEntity.ok(rating);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0.0);
+        }
+    }
+
+    @GetMapping("/user/{username}/count")
+    public ResponseEntity<Integer> getUserReviewCount(@PathVariable("username") String username) {
+        try {
+            int count = reviewService.getUserReviewCount(username);
+            return ResponseEntity.ok(count);
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // update
+    @PutMapping("/film/{filmTitle}")
+    public ResponseEntity<Review> updateReviewByUserAndFilm(
+            @PathVariable("filmTitle") String filmTitle,
+            @RequestBody ReviewUpdateDto reviewUpdate) {
+        try {
+            Review updatedReview = reviewService.updateReview(filmTitle, reviewUpdate);
+            return ResponseEntity.ok(updatedReview);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 //
-//import movieApp.model.Review;
-//import movieApp.model.dto.reviewDto.ReviewCreateDto;
-//import movieApp.model.dto.reviewDto.ReviewUpdateDto;
-//import movieApp.service.ReviewService;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.List;
-//
-//@RestController
-//@RequestMapping("/reviews")
-//public class ReviewController {
-//    private final ReviewService reviewService;
-//
-//    public ReviewController(ReviewService reviewService) {
-//        this.reviewService = reviewService;
-//    }
-//
-//    // create
-//    @PostMapping
-//    public ResponseEntity<Review> createReview(@RequestBody ReviewCreateDto reviewDto) {
-//        try {
-//            Review createdReview = reviewService.addReview(reviewDto);
-//            return ResponseEntity.status(HttpStatus.CREATED).body(createdReview);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.badRequest().body(null);
-//        }
-//    }
-//
-//    // read
-//    @GetMapping("/user/{userId}")
-//    public ResponseEntity<List<Review>> getUserReviews(@PathVariable("userId") int userId) {
-//        try {
-//            List<Review> reviews = reviewService.getReviewsByUserId(userId);
-//            return reviews.isEmpty() ?
-//                    ResponseEntity.noContent().build() :
-//                    ResponseEntity.ok(reviews);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        }
-//    }
-//
-//    @GetMapping("/film/{filmId}")
-//    public ResponseEntity<List<Review>> getFilmReviews(@PathVariable("filmId") int filmId) {
-//        try {
-//            List<Review> reviews = reviewService.getReviewsByFilmId(filmId);
-//            return reviews.isEmpty() ?
-//                    ResponseEntity.noContent().build() :
-//                    ResponseEntity.ok(reviews);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//        }
-//    }
-//
-//    @GetMapping("/film/{filmId}/rating")
-//    public ResponseEntity<Double> getFilmRating(@PathVariable("filmId") int filmId) {
-//        try {
-//            Double rating = reviewService.getAverageRatingByFilmId(filmId);
-//            return ResponseEntity.ok(rating);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0.0);
-//        }
-//    }
-//
-//    @GetMapping("/user/{userId}/count")
-//    public ResponseEntity<Integer> getUserReviewCount(@PathVariable("userId") int userId) {
-//        try {
-//            int count = reviewService.getUserReviewCount(userId);
-//            return ResponseEntity.ok(count);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0);
-//        }
-//    }
-//
-//    @GetMapping("/user/{userId}/film/{filmId}")
-//    public ResponseEntity<Review> getUserFilmReview(
-//            @PathVariable("filmId") int filmId) {
-//        return reviewService.getReviewByUserAndFilm(filmId)
-//                .map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.notFound().build());
-//    }
-//
-//    // update
-//    @PutMapping("/user/{userId}/film/{filmId}")
-//    public ResponseEntity<Review> updateReviewByUserAndFilm(
-//            @PathVariable("userId") int userId,
-//            @PathVariable("filmId") int filmId,
-//            @RequestBody ReviewUpdateDto reviewUpdate) {
-//        try {
-//            Review updatedReview = reviewService.updateReviewByUserAndFilm(userId, filmId, reviewUpdate);
-//            return ResponseEntity.ok(updatedReview);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.badRequest().body(null);
-//        }
-//    }
-//
-//    // delete
-//    @DeleteMapping("/user/{userId}/film/{filmId}")
-//    public ResponseEntity<String> deleteReviewByUserAndFilm(
-//            @PathVariable("userId") int userId,
-//            @PathVariable("filmId") int filmId) {
-//        boolean deleted = reviewService.removeReviewByUserAndFilm(userId, filmId);
-//        return deleted ?
-//                ResponseEntity.ok("Отзыв удален") :
-//                ResponseEntity.status(HttpStatus.NOT_FOUND).body("Отзыв не найден");
-//    }
-//}
+    // delete
+    @DeleteMapping("/film/{filmTitle}")
+    public ResponseEntity<String> deleteReviewByUserAndFilm(
+            @PathVariable("filmTitle") String filmTitle) {
+        boolean deleted = reviewService.deleteReview(filmTitle);
+        return deleted ?
+                ResponseEntity.ok("Отзыв удален") :
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body("Отзыв не найден");
+    }
+}

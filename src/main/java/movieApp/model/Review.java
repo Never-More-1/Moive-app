@@ -1,6 +1,8 @@
 package movieApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -9,39 +11,38 @@ public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "film_id", nullable = false)
-    private Film film; // Связь с фильмом
+    private Film film;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Связь с пользователем
+    @JoinColumn(name = "user_id", nullable = true)
+    @JsonIgnore
+    private User user;
 
-    @Column(nullable = false, length = 2000)
-    private String text;
+    @JoinColumn(name = "review_text", nullable = true)
+    private String reviewText;
 
     @Column(nullable = false)
-    private Double rating; // например, от 1 до 5
+    private Integer rating;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    // Конструкторы
     public Review() {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Review(Film film, User user, String text, Double rating) {
+    public Review(Film film, String text, Integer rating) {
         this.film = film;
-        this.user = user;
-        this.text = text;
+        this.reviewText = text;
         this.rating = rating;
         this.createdAt = LocalDateTime.now();
     }
 
-    // Геттеры и сеттеры
     public Integer getId() {
         return id;
     }
@@ -67,20 +68,29 @@ public class Review {
     }
 
     public String getText() {
-        return text;
+        return reviewText;
     }
 
     public void setText(String text) {
-        this.text = text;
+        this.reviewText = text;
     }
 
-    public Double getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(Double rating) {
-        this.rating = rating;
+    public void setRating(Integer rating) {
+        if (rating == null) {
+            this.rating = null;
+        } else if (rating < 1) {
+            this.rating = 1;
+        } else if (rating > 10) {
+            this.rating = 10;
+        } else {
+            this.rating = rating;
+        }
     }
+
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

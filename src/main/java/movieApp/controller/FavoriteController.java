@@ -1,15 +1,20 @@
 package movieApp.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import movieApp.model.Favorite;
+import movieApp.model.User;
 import movieApp.model.dto.favoriteDto.FavoriteResponseDto;
 //import movieApp.service.FavoriteService;
 import movieApp.service.FavoriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,23 +42,20 @@ public class FavoriteController {
     }
 
     // read
-    @GetMapping("/user")
-    public ResponseEntity<?> getUserFavorites() {
+    @GetMapping("/user/{username}")
+    public ResponseEntity<?> getUserFavorites(@PathVariable String username) {
         try {
-            List<Favorite> favorites = favoriteService.getUserFavorites();
-            List<FavoriteResponseDto> responseDto = favorites.stream()
-                    .map(FavoriteResponseDto::fromFavorite)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(responseDto);
+            List<Favorite> favorite = favoriteService.findUserFavoritesByUsername(username);
+            return ResponseEntity.ok(favorite);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
-    @GetMapping("/count")
-    public ResponseEntity<?> countUserFavorites() {
+    @GetMapping("/count/{username}")
+    public ResponseEntity<?> countUserFavorites(@PathVariable String username) {
         try {
-            int count = favoriteService.countUserFavorites();
+            int count = favoriteService.countUserFavorites(username);
             return ResponseEntity.ok(count);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

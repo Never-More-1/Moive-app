@@ -28,11 +28,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers(HttpMethod.POST, "/security/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/reviews/**").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/films").permitAll()
                                 .requestMatchers(HttpMethod.GET,"/films/{id}").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/security/jwt").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/user").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/user/myself").permitAll()
+                                .requestMatchers("/favorites/**").permitAll()
                                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .userDetailsService(customUserDetailService)
