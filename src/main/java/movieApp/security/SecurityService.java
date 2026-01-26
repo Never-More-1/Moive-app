@@ -29,7 +29,6 @@ public class SecurityService {
     private final JwtUtils jwtUtils;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    // Исправленный конструктор
     public SecurityService(UserRepository userRepository,
                            SecurityRepository securityRepository,
                            BCryptPasswordEncoder bCryptPasswordEncoder,

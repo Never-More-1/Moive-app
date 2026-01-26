@@ -16,11 +16,9 @@ import movieApp.exception.UsernameExistsException;
 import movieApp.exception.WrongPasswordException;
 import movieApp.model.Role;
 import movieApp.model.Security;
-import movieApp.model.User;
 import movieApp.model.dto.authDto.AuthRequest;
 import movieApp.model.dto.authDto.AuthResponse;
 import movieApp.model.dto.userDto.UserRegistrationDto;
-import movieApp.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,11 +40,9 @@ import java.util.Optional;
 public class SecurityController {
 
     private final SecurityService securityService;
-    private final UserService userService;
 
-    public SecurityController(SecurityService securityService, UserService userService) {
+    public SecurityController(SecurityService securityService) {
         this.securityService = securityService;
-        this.userService = userService;
     }
 
     @GetMapping()

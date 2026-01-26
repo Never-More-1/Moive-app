@@ -19,8 +19,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/favorites")
 @Tag(
-        name = "Избранное",
-        description = "Управление избранными фильмами пользователей"
+        name = "Favorites",
+        description = "Managing user's favorite movies"
 )
 public class FavoriteController {
 
@@ -31,23 +31,22 @@ public class FavoriteController {
         this.favoriteService = favoriteService;
     }
 
-    // create
     @PostMapping("/film/{filmId}")
     @Operation(
-            summary = "Добавить фильм в избранное",
-            description = "Добавление фильма в список избранного текущего пользователя"
+            summary = "Add movie to favorites",
+            description = "Adding a movie to the current user's favorites list"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Фильм успешно добавлен в избранное"),
-            @ApiResponse(responseCode = "400", description = "Фильм уже в избранном или не найден"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "404", description = "Фильм не найден")
+            @ApiResponse(responseCode = "200", description = "The movie has been successfully added to your favorites"),
+            @ApiResponse(responseCode = "400", description = "The movie is already in your favorites or not found"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     public ResponseEntity<?> addToFavoritesWithPath(
             @Parameter(
-                    description = "ID фильма",
-                    example = "123",
+                    description = "Film ID",
+                    example = "9",
                     required = true
             )
             @PathVariable Integer filmId) {
@@ -60,22 +59,22 @@ public class FavoriteController {
         }
     }
 
-    // read
     @GetMapping("/user/{username}")
     @Operation(
-            summary = "Получить избранное пользователя",
-            description = "Получение списка избранных фильмов указанного пользователя"
+            summary = "Get user's favorites",
+            description = "Get a list of favorite movies of a specified user"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список избранного получен"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "200", description = "Favorites list received"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
+
     public ResponseEntity<?> getUserFavorites(
             @Parameter(
-                    description = "Имя пользователя",
-                    example = "john_doe",
+                    description = "Username",
+                    example = "dante",
                     required = true
             )
             @PathVariable String username) {
@@ -89,19 +88,19 @@ public class FavoriteController {
 
     @GetMapping("/count/{username}")
     @Operation(
-            summary = "Количество избранных фильмов",
-            description = "Получение количества избранных фильмов указанного пользователя"
+            summary = "Number of favorite films",
+            description = "Get the number of favorite movies for a specified user"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Количество получено"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "200", description = "Amount received"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<?> countUserFavorites(
             @Parameter(
-                    description = "Имя пользователя",
-                    example = "john_doe",
+                    description = "Username",
+                    example = "dante",
                     required = true
             )
             @PathVariable String username) {
@@ -113,19 +112,19 @@ public class FavoriteController {
         }
     }
 
-    // delete
     @DeleteMapping("/film/{filmId}")
     @Operation(
-            summary = "Удалить фильм из избранного",
-            description = "Удаление фильма из списка избранного текущего пользователя"
+            summary = "Remove movie from favorites",
+            description = "Removing a movie from the current user's favorites list"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Фильм удален из избранного"),
-            @ApiResponse(responseCode = "400", description = "Фильм не найден в избранном"),
+            @ApiResponse(responseCode = "200", description = "The film has been removed from favorites"),
+            @ApiResponse(responseCode = "400", description = "The film was not found in your favorites"),
             @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
             @ApiResponse(responseCode = "404", description = "Фильм не найден")
     })
+
     public ResponseEntity<?> deleteFromFavorites(
             @Parameter(
                     description = "ID фильма",

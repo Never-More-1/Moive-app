@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class ReviewUpdateDto {
     private String reviewText;
-    private int rating; // от 1 до 10
+    private int rating;
 
     public String getReviewText() {
         return reviewText;
