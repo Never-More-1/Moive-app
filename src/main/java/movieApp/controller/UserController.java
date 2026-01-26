@@ -1,5 +1,11 @@
 package movieApp.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import movieApp.exception.UserNotFoundException;
 import movieApp.model.Security;
 import movieApp.model.dto.userDto.UserUpdateDto;
@@ -16,6 +22,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
+@Tag(
+        name = "Пользователи",
+        description = "Управление пользователями системы"
+)
 public class UserController {
     private UserService userService;
 
@@ -24,6 +34,17 @@ public class UserController {
     }
 
     @GetMapping()
+    @Operation(
+            summary = "Получить всех пользователей",
+            description = "Получение списка всех зарегистрированных пользователей"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Список пользователей получен"),
+            @ApiResponse(responseCode = "204", description = "Пользователи не найдены"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав")
+    })
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> allUsers = userService.getAllUsers();
         if(allUsers.isEmpty()){
@@ -34,7 +55,23 @@ public class UserController {
 
     //read
     @GetMapping("/username/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable("username") String username) {
+    @Operation(
+            summary = "Получить пользователя по имени",
+            description = "Поиск пользователя по имени пользователя (username)"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Пользователь найден"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+    })
+    public ResponseEntity<User> getUserByUsername(
+            @Parameter(
+                    description = "Имя пользователя",
+                    example = "dante",
+                    required = true
+            )
+            @PathVariable("username") String username) {
         Optional<User> user = userService.getUserByUsername(username);
         if (user.isPresent()) {
             return ResponseEntity.ok(user.get());
@@ -43,18 +80,50 @@ public class UserController {
     }
 
     @GetMapping("/myself")
+    @Operation(
+            summary = "Получить информацию о себе",
+            description = "Получение информации о текущем авторизованном пользователе"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Информация получена"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+    })
     public ResponseEntity<User> getMyself() {
         Optional<User> user = userService.getMyself();
         if (user.isEmpty()) {
-           throw new UserNotFoundException(user.get().getUsername());
+            throw new UserNotFoundException("Текущий пользователь не найден");
         }
         return ResponseEntity.ok(user.get());
     }
 
     //update
     @PutMapping("/username/{username}")
-    public ResponseEntity<?> updateUserByUsername(@RequestBody UserUpdateDto userUpdateDto,
-                                            @PathVariable("username") String username) {
+    @Operation(
+            summary = "Обновить данные пользователя",
+            description = "Обновление информации о пользователе по имени пользователя"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Данные пользователя обновлены"),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+    })
+    public ResponseEntity<?> updateUserByUsername(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Данные для обновления пользователя",
+                    required = true
+            )
+            @RequestBody UserUpdateDto userUpdateDto,
+            @Parameter(
+                    description = "Имя пользователя",
+                    example = "dante",
+                    required = true
+            )
+            @PathVariable("username") String username) {
         try {
             User updatedUser = userService.updateUser(username, userUpdateDto);
             return ResponseEntity.ok(updatedUser);
@@ -65,7 +134,25 @@ public class UserController {
 
     //delete
     @DeleteMapping("/username/{username}")
-    public ResponseEntity<HttpStatusCode> deleteUserByUsername(@PathVariable("username") String username) throws SQLException {
+    @Operation(
+            summary = "Удалить пользователя",
+            description = "Удаление пользователя по имени пользователя"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Пользователь удален"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
+            @ApiResponse(responseCode = "409", description = "Конфликт при удалении")
+    })
+    public ResponseEntity<HttpStatusCode> deleteUserByUsername(
+            @Parameter(
+                    description = "Имя пользователя",
+                    example = "dante",
+                    required = true
+            )
+            @PathVariable("username") String username) throws SQLException {
         if (userService.removeUserByUsername(username)) {
             return ResponseEntity.noContent().build();
         }

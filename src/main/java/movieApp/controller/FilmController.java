@@ -1,5 +1,11 @@
 package movieApp.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import movieApp.exception.FilmNotFoundException;
 import movieApp.model.Film;
@@ -15,6 +21,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/films")
+@Tag(
+        name = "Управление фильмами",
+        description = "Операции с фильмами: просмотр, добавление, обновление, удаление"
+)
 public class FilmController {
     private final FilmService filmService;
 
@@ -22,22 +32,59 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    // create
-    @PreAuthorize("hasRole('ADMIN')")
+    // CREATE
     @PostMapping("/create")
+    @Operation(
+            summary = "Добавить новый фильм",
+            description = "Добавление фильма на сайт (требуются права ADMIN)"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Фильм успешно добавлен"),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные фильма"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)")
+    })
     public ResponseEntity<Film> addFilm(@Valid @RequestBody FilmCreateDto filmCreateDto) {
         Film createdFilm = filmService.addFilm(filmCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdFilm);
     }
 
-    // read
+    // READ
     @GetMapping
+    @Operation(
+            summary = "Получить все фильмы",
+            description = "Получение списка всех фильмов на сайте"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Список фильмов получен"),
+            @ApiResponse(responseCode = "204", description = "Фильмы не найдены")
+    })
     public ResponseEntity<List<Film>> getAllFilms() {
-        return ResponseEntity.ok(filmService.getAllFilms());
+        List<Film> films = filmService.getAllFilms();
+        if (films.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(films);
     }
 
     @GetMapping("/{title}")
-    public ResponseEntity<Film> getFilm(@PathVariable("title") String title) {
+    @Operation(
+            summary = "Найти фильм по названию",
+            description = "Поиск фильма по точному названию"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Фильм найден"),
+            @ApiResponse(responseCode = "404", description = "Фильм не найден")
+    })
+    public ResponseEntity<Film> getFilm(
+            @Parameter(
+                    description = "Название фильма",
+                    example = "Интерстеллар",
+                    required = true
+            )
+            @PathVariable("title") String title) {
         try {
             Film film = filmService.getFilmByTitle(title);
             return ResponseEntity.ok(film);
@@ -46,19 +93,54 @@ public class FilmController {
         }
     }
 
-    // update
-    @PreAuthorize("hasRole('ADMIN')")
+    // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Film> updateFilm(@PathVariable("id") int filmId,
-                                           @Valid @RequestBody FilmUpdateDto filmUpdateDto) {
+    @Operation(
+            summary = "Обновить информацию о фильме",
+            description = "Обновление данных фильма: название, год выхода, режиссер, рейтинг (требуются права ADMIN)"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Фильм успешно обновлен"),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)"),
+            @ApiResponse(responseCode = "404", description = "Фильм не найден")
+    })
+    public ResponseEntity<Film> updateFilm(
+            @Parameter(
+                    description = "ID фильма",
+                    example = "123",
+                    required = true
+            )
+            @PathVariable("id") int filmId,
+            @Valid @RequestBody FilmUpdateDto filmUpdateDto) {
         Film updatedFilm = filmService.updateFilm(filmId, filmUpdateDto);
         return ResponseEntity.ok(updatedFilm);
     }
 
-    // delete
-    @PreAuthorize("hasRole('ADMIN')")
+    // DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFilm(@PathVariable("id") int filmId) {
+    @Operation(
+            summary = "Удалить фильм",
+            description = "Удаление фильма с сайта (требуются права ADMIN)"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Фильм успешно удален"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)"),
+            @ApiResponse(responseCode = "404", description = "Фильм не найден")
+    })
+    public ResponseEntity<?> deleteFilm(
+            @Parameter(
+                    description = "ID фильма",
+                    example = "123",
+                    required = true
+            )
+            @PathVariable("id") int filmId) {
         try {
             Film deletedFilm = filmService.deleteFilm(filmId);
             return ResponseEntity.ok(deletedFilm);

@@ -2,7 +2,6 @@ package movieApp.service;
 
 import jakarta.transaction.Transactional;
 import movieApp.exception.UserNotFoundException;
-import movieApp.exception.UsernameExistException;
 import movieApp.model.Role;
 import movieApp.model.Security;
 import movieApp.model.User;
@@ -36,23 +35,9 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //create
-    public User addUser(UserCreateDto userDto) throws SQLException {
-        User newUser = new User();
-        newUser.setUsername(userDto.getUsername());
-        newUser.setAge(userDto.getAge());
-        newUser.setCreatedAt(LocalDateTime.now());
-
-        return userRepository.save(newUser);
-    }
-
     //read
     public List<User> getAllUsers() {
         return userRepository.findAll();
-    }
-
-    public Optional<User> getUserById(int id) {
-        return userRepository.findById(id);
     }
 
     public Optional<User> getUserByUsername(String username) {

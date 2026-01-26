@@ -6,7 +6,6 @@ import movieApp.model.*;
 import movieApp.model.dto.filmDto.FilmUpdateDto;
 import movieApp.model.dto.reviewDto.ReviewCreateDto;
 import movieApp.model.dto.reviewDto.ReviewUpdateDto;
-import movieApp.model.dto.userDto.UserUpdateDto;
 import movieApp.repository.FilmRepository;
 import movieApp.repository.ReviewRepository;
 import movieApp.repository.SecurityRepository;
@@ -203,7 +202,7 @@ public class ReviewService {
         boolean isOwner = review.getUser() != null && review.getUser().getId() == currentUser.getId();
 
         if (!isAdmin && !isOwner) {
-            throw new SecurityException("У вас нет прав для удаления этого отзыва");
+            throw new AccessDeniedException();
         }
 
         reviewRepository.delete(review);

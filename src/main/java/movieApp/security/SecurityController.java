@@ -1,5 +1,14 @@
 package movieApp.security;
 
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +35,10 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/security")
+@Tag(
+        name = "Аутентификация и безопасность",
+        description = "Регистрация, авторизация и управление доступом пользователей"
+)
 public class SecurityController {
 
     private final SecurityService securityService;
@@ -37,6 +50,18 @@ public class SecurityController {
     }
 
     @GetMapping()
+    @Operation(
+            summary = "Получить всех пользователей безопасности",
+            description = "Получение списка всех записей безопасности пользователей"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Список получен"),
+            @ApiResponse(responseCode = "204", description = "Записи не найдены"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)")
+    })
     public ResponseEntity<List<Security>> getAllUsers() {
         List<Security> allUsers = securityService.getAllUsers();
         if(allUsers.isEmpty()){
@@ -46,14 +71,33 @@ public class SecurityController {
     }
 
     @PostMapping("/jwt")
-    public ResponseEntity<AuthResponse> generateJwt(@RequestBody AuthRequest authRequest) throws WrongPasswordException {
+    @Operation(
+            summary = "Получить JWT токен",
+            description = "Аутентификация пользователя и получение JWT токена для доступа к API"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Токен успешно сгенерирован",
+                    content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
+            @ApiResponse(responseCode = "401", description = "Неверные учетные данные")
+    })
+    @ResponseBody
+    public ResponseEntity<AuthResponse> generateJwt(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Учетные данные для аутентификации",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = AuthRequest.class))
+            )
+            @RequestBody AuthRequest authRequest) throws WrongPasswordException {
+
         if (authRequest == null || authRequest.getUsername() == null || authRequest.getPassword() == null) {
             throw new ValidationException("Invalid request");
         }
 
         Optional<String> jwt = securityService.generateJwt(authRequest);
         if (jwt.isPresent()) {
-            return new ResponseEntity<>(new AuthResponse(jwt.get()), HttpStatus.OK);
+            // Возвращаем AuthResponse объект
+            return ResponseEntity.ok(new AuthResponse(jwt.get()));
         }
 
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -61,16 +105,52 @@ public class SecurityController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
-    public ResponseEntity<Security> getSecurityById(@PathVariable("id") int id) {
+    @Operation(
+            summary = "Получить запись безопасности по ID",
+            description = "Получение информации о безопасности пользователя по ID"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Запись найдена"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)"),
+            @ApiResponse(responseCode = "404", description = "Запись не найдена")
+    })
+    public ResponseEntity<Security> getSecurityById(
+            @Parameter(
+                    description = "ID записи безопасности",
+                    example = "1",
+                    required = true
+            )
+            @PathVariable("id") int id) {
         Optional<Security> security = securityService.getSecurityById(id);
-        if (security.isPresent()) { // Исправлено: isPresent() вместо isEmpty()
+        if (security.isPresent()) {
             return new ResponseEntity<>(security.get(), HttpStatus.OK);
         }
-        return ResponseEntity.notFound().build(); // Исправлено: 404 если не найден
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/role/{role}")
-    public ResponseEntity<List<Security>> getAllSecuritiesByRole(@PathVariable("role") String role) {
+    @Operation(
+            summary = "Получить пользователей по роли",
+            description = "Получение списка пользователей безопасности по роли (ADMIN или USER)"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @PreAuthorize("hasRole('ADMIN')")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Список получен"),
+            @ApiResponse(responseCode = "400", description = "Некорректная роль"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
+            @ApiResponse(responseCode = "404", description = "Пользователи не найдены")
+    })
+    public ResponseEntity<List<Security>> getAllSecuritiesByRole(
+            @Parameter(
+                    description = "Роль пользователя",
+                    example = "ADMIN",
+                    required = true
+            )
+            @PathVariable("role") String role) {
         try {
             role = role.toUpperCase();
             Role.valueOf(role);
@@ -86,13 +166,26 @@ public class SecurityController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<HttpStatus> registration(@Valid @RequestBody UserRegistrationDto userRegistrationDto,
-                                                   BindingResult bindingResult) throws UsernameExistsException {
+    @Operation(
+            summary = "Регистрация нового пользователя",
+            description = "Создание нового аккаунта пользователя"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Пользователь успешно зарегистрирован"),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные или ошибки валидации"),
+            @ApiResponse(responseCode = "409", description = "Пользователь с таким именем уже существует")
+    })
+    public ResponseEntity<HttpStatus> registration(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Данные для регистрации нового пользователя",
+                    required = true
+            )
+            @Valid @RequestBody UserRegistrationDto userRegistrationDto,
+            BindingResult bindingResult) throws UsernameExistsException {
         if (bindingResult.hasErrors()) {
             List<String> errMessages = new ArrayList<>();
 
             for (ObjectError objectError : bindingResult.getAllErrors()) {
-                //log.warn(objectError.toString());
                 errMessages.add(objectError.getDefaultMessage());
             }
             throw new ValidationException(String.valueOf(errMessages));
@@ -103,9 +196,28 @@ public class SecurityController {
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
+    @Hidden
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/admin")
-    public ResponseEntity<HttpStatus> setRoleToAdmin(@PathVariable Integer id) {
+    @Operation(
+            summary = "Назначить роль ADMIN",
+            description = "Назначение роли ADMIN пользователю по ID (только для администраторов)"
+    )
+    @SecurityRequirement(name = "bearerAuth")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Роль успешно назначена"),
+            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
+            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)"),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
+            @ApiResponse(responseCode = "409", description = "Конфликт при назначении роли")
+    })
+    public ResponseEntity<HttpStatus> setRoleToAdmin(
+            @Parameter(
+                    description = "ID пользователя",
+                    example = "1",
+                    required = true
+            )
+            @PathVariable Integer id) {
         if (securityService.setRoleToAdmin(id)) {
             return ResponseEntity.noContent().build();
         }

@@ -1,7 +1,6 @@
 package movieApp.security;
 
 import movieApp.exception.UserNotFoundException;
-import movieApp.exception.UsernameExistException;
 import movieApp.exception.UsernameExistsException;
 import movieApp.exception.WrongPasswordException;
 import movieApp.model.Role;
