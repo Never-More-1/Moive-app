@@ -2,9 +2,9 @@ package movieApp.exception;
 
 public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String username) {
-        super("Пользователь с username " + username + " не найден");
+        super("User with username \"" + username + "\" not found");
     }
     public UserNotFoundException(int id) {
-        super("Пользователь с id " + id + " не найден");
+        super("User with id \"" + id + "\" not found");
     }
 }

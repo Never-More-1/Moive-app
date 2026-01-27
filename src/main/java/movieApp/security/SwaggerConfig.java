@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-    private static final String BEARER_KEY = "bearer";
-
     @Configuration
     public class OpenApiConfig {
 
@@ -25,7 +23,7 @@ public class SwaggerConfig {
                     .info(new Info()
                             .title("Movie App API")
                             .version("1.0")
-                            .description("API для управления фильмами"))
+                            .description("API for managing movies"))
                     .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                     .components(new Components()
                             .addSecuritySchemes(securitySchemeName,
@@ -34,7 +32,7 @@ public class SwaggerConfig {
                                             .scheme("bearer")
                                             .bearerFormat("JWT")
                                             .name("Authorization")
-                                            .description("Введите JWT токен. Формат: Bearer {token}")));
+                                            .description("Enter the JWT token. Format: Bearer {token}")));
         }
 
         @Bean

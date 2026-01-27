@@ -1,7 +1,7 @@
 package movieApp.exception;
 
 public class WrongPasswordException extends Exception{
-    private String wrongPassword;
+    private final String wrongPassword;
 
     public WrongPasswordException(String wrongPassword) {
         this.wrongPassword = wrongPassword;

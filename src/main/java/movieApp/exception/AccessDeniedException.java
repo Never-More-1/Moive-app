@@ -2,6 +2,6 @@ package movieApp.exception;
 
 public class AccessDeniedException extends RuntimeException {
     public AccessDeniedException() {
-        super("Доступ запрещен, требуемая роль - ADMIN");
+        super("Access denied, required role - ADMIN");
     }
 }

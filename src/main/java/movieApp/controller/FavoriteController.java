@@ -31,7 +31,7 @@ public class FavoriteController {
         this.favoriteService = favoriteService;
     }
 
-    @PostMapping("/film/{filmId}")
+    @PostMapping("/{filmId}")
     @Operation(
             summary = "Add movie to favorites",
             description = "Adding a movie to the current user's favorites list"
@@ -45,7 +45,7 @@ public class FavoriteController {
     })
     public ResponseEntity<?> addToFavoritesWithPath(
             @Parameter(
-                    description = "Film ID",
+                    description = "Movie ID",
                     example = "9",
                     required = true
             )
@@ -59,7 +59,7 @@ public class FavoriteController {
         }
     }
 
-    @GetMapping("/user/{username}")
+    @GetMapping("/{username}")
     @Operation(
             summary = "Get user's favorites",
             description = "Get a list of favorite movies of a specified user"
@@ -112,7 +112,7 @@ public class FavoriteController {
         }
     }
 
-    @DeleteMapping("/film/{filmId}")
+    @DeleteMapping("/{filmId}")
     @Operation(
             summary = "Remove movie from favorites",
             description = "Removing a movie from the current user's favorites list"
@@ -121,20 +121,20 @@ public class FavoriteController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "The film has been removed from favorites"),
             @ApiResponse(responseCode = "400", description = "The film was not found in your favorites"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "404", description = "Фильм не найден")
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "404", description = "Movie not found")
     })
 
     public ResponseEntity<?> deleteFromFavorites(
             @Parameter(
-                    description = "ID фильма",
+                    description = "Movie ID",
                     example = "9",
                     required = true
             )
             @PathVariable Integer filmId) {
         try {
             favoriteService.deleteFromFavorites(filmId);
-            return ResponseEntity.ok("Фильм удален из избранного");
+            return ResponseEntity.ok("The film has been deleted from favorites");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

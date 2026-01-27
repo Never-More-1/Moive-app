@@ -3,32 +3,20 @@ package movieApp.model.dto.userDto;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
-//TODO: пофиксить Lombok!!!
 @Data
 public class UserUpdateDto {
     private int id;
 
-    @Size(min = 3, max = 15, message = "Username должен быть минимум 3 символа, а максимум 15")
+    @Size(min = 3, max = 15, message = "Username must be minimum 3, maximum 15")
     private String username;
 
     private String password;
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     @Min(value = 1)
     @Max(value = 120)
     private int age;
 
-//    @Pattern(regexp = "USER", message = "Роль должна быть USER или ADMIN")
-//    private String role;
-
-    @Email(message = "Email должен быть корректным")
+    @Email(message = "Email must be correct")
     private String email;
 
     public int getId() {
@@ -47,6 +35,14 @@ public class UserUpdateDto {
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public int getAge() {
         return age;
     }
@@ -54,14 +50,6 @@ public class UserUpdateDto {
     public void setAge(int age) {
         this.age = age;
     }
-
-//    public String getRole() {
-//        return role;
-//    }
-//
-//    public void setRole(String role) {
-//        this.role = role;
-//    }
 
     public String getEmail() {
         return email;

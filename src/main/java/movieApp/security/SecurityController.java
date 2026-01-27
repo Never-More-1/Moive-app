@@ -34,8 +34,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/security")
 @Tag(
-        name = "Аутентификация и безопасность",
-        description = "Регистрация, авторизация и управление доступом пользователей"
+        name = "Authentication and Security",
+        description = "Registration, authorization and user access management"
 )
 public class SecurityController {
 
@@ -47,16 +47,16 @@ public class SecurityController {
 
     @GetMapping()
     @Operation(
-            summary = "Получить всех пользователей безопасности",
-            description = "Получение списка всех записей безопасности пользователей"
+            summary = "Get all security users",
+            description = "Getting a list of all user security records"
     )
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список получен"),
-            @ApiResponse(responseCode = "204", description = "Записи не найдены"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)")
+            @ApiResponse(responseCode = "200", description = "List received"),
+            @ApiResponse(responseCode = "204", description = "No records found"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "403", description = "Insufficient rights (requires ADMIN role)")
     })
     public ResponseEntity<List<Security>> getAllUsers() {
         List<Security> allUsers = securityService.getAllUsers();
@@ -68,19 +68,19 @@ public class SecurityController {
 
     @PostMapping("/jwt")
     @Operation(
-            summary = "Получить JWT токен",
-            description = "Аутентификация пользователя и получение JWT токена для доступа к API"
+            summary = "Get a JWT token",
+            description = "Authenticate the user and obtain a JWT token to access the API"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Токен успешно сгенерирован",
+            @ApiResponse(responseCode = "200", description = "The token was successfully generated",
                     content = @Content(schema = @Schema(implementation = AuthResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Некорректный запрос"),
-            @ApiResponse(responseCode = "401", description = "Неверные учетные данные")
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "401", description = "Incorrect credentials")
     })
     @ResponseBody
     public ResponseEntity<AuthResponse> generateJwt(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Учетные данные для аутентификации",
+                    description = "Authentication credentials",
                     required = true,
                     content = @Content(schema = @Schema(implementation = AuthRequest.class))
             )
@@ -92,7 +92,6 @@ public class SecurityController {
 
         Optional<String> jwt = securityService.generateJwt(authRequest);
         if (jwt.isPresent()) {
-            // Возвращаем AuthResponse объект
             return ResponseEntity.ok(new AuthResponse(jwt.get()));
         }
 
@@ -102,20 +101,20 @@ public class SecurityController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     @Operation(
-            summary = "Получить запись безопасности по ID",
-            description = "Получение информации о безопасности пользователя по ID"
+            summary = "Get security record by ID",
+            description = "Obtaining user security information by ID"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Запись найдена"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)"),
-            @ApiResponse(responseCode = "404", description = "Запись не найдена")
+            @ApiResponse(responseCode = "200", description = "Entry found"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "403", description = "Insufficient rights (requires ADMIN role)"),
+            @ApiResponse(responseCode = "404", description = "Record not found")
     })
     public ResponseEntity<Security> getSecurityById(
             @Parameter(
-                    description = "ID записи безопасности",
-                    example = "1",
+                    description = "Security entry ID",
+                    example = "9",
                     required = true
             )
             @PathVariable("id") int id) {
@@ -128,21 +127,21 @@ public class SecurityController {
 
     @GetMapping("/role/{role}")
     @Operation(
-            summary = "Получить пользователей по роли",
-            description = "Получение списка пользователей безопасности по роли (ADMIN или USER)"
+            summary = "Get users by role",
+            description = "Getting a list of security users by role (ADMIN or USER)"
     )
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список получен"),
-            @ApiResponse(responseCode = "400", description = "Некорректная роль"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
-            @ApiResponse(responseCode = "404", description = "Пользователи не найдены")
+            @ApiResponse(responseCode = "200", description = "List received"),
+            @ApiResponse(responseCode = "400", description = "Incorrect role"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "403", description = "Insufficient rights"),
+            @ApiResponse(responseCode = "404", description = "No users found")
     })
     public ResponseEntity<List<Security>> getAllSecuritiesByRole(
             @Parameter(
-                    description = "Роль пользователя",
+                    description = "User Role",
                     example = "ADMIN",
                     required = true
             )
@@ -163,17 +162,17 @@ public class SecurityController {
 
     @PostMapping("/registration")
     @Operation(
-            summary = "Регистрация нового пользователя",
-            description = "Создание нового аккаунта пользователя"
+            summary = "New user registration",
+            description = "Creating a new user account"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Пользователь успешно зарегистрирован"),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные или ошибки валидации"),
-            @ApiResponse(responseCode = "409", description = "Пользователь с таким именем уже существует")
+            @ApiResponse(responseCode = "204", description = "User successfully registered"),
+            @ApiResponse(responseCode = "400", description = "Incorrect data or validation errors"),
+            @ApiResponse(responseCode = "409", description = "A user with this name already exists")
     })
     public ResponseEntity<HttpStatus> registration(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Данные для регистрации нового пользователя",
+                    description = "New user registration details",
                     required = true
             )
             @Valid @RequestBody UserRegistrationDto userRegistrationDto,
@@ -196,21 +195,21 @@ public class SecurityController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/admin")
     @Operation(
-            summary = "Назначить роль ADMIN",
-            description = "Назначение роли ADMIN пользователю по ID (только для администраторов)"
+            summary = "Assign the ADMIN role",
+            description = "Assigning the ADMIN role to a user by ID (for administrators only)"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Роль успешно назначена"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
-            @ApiResponse(responseCode = "409", description = "Конфликт при назначении роли")
+            @ApiResponse(responseCode = "204", description = "The role has been successfully assigned"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "403", description = "Insufficient rights (requires ADMIN role)"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "409", description = "Conflict in role assignment")
     })
     public ResponseEntity<HttpStatus> setRoleToAdmin(
             @Parameter(
-                    description = "ID пользователя",
-                    example = "1",
+                    description = "User ID",
+                    example = "9",
                     required = true
             )
             @PathVariable Integer id) {

@@ -2,9 +2,10 @@ package movieApp.exception;
 
 public class FilmNotFoundException extends RuntimeException{
     public FilmNotFoundException(int id) {
-        super("Фильм с id " + id + " не найден");
+        super("Movie with id \"" + id + "\" not found");
     }
     public FilmNotFoundException(String title) {
-        super("Фильм с названием " + " не найден");
+        super(
+                "A movie with the title \"" + title + "\" was not found");
     }
 }

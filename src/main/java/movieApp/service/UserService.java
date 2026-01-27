@@ -1,41 +1,38 @@
 package movieApp.service;
 
 import jakarta.transaction.Transactional;
+import movieApp.exception.AccessDeniedException;
 import movieApp.exception.UserNotFoundException;
 import movieApp.model.Role;
 import movieApp.model.Security;
 import movieApp.model.User;
-import movieApp.model.dto.userDto.UserCreateDto;
 import movieApp.model.dto.userDto.UserUpdateDto;
-import movieApp.repository.FavoriteRepository;
 import movieApp.repository.SecurityRepository;
 import movieApp.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private SecurityRepository securityRepository;
-
-    @Autowired
-    private FavoriteRepository favoriteRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    //read
+    public UserService(
+            UserRepository userRepository,
+            SecurityRepository securityRepository,
+            PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.securityRepository = securityRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -57,7 +54,6 @@ public class UserService {
         return Optional.empty();
     }
 
-    //update
     @Transactional
     public User updateUser(String username, UserUpdateDto userUpdateDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -65,7 +61,7 @@ public class UserService {
         Optional<Security> currentUserSecurity = securityRepository.getByUsername(username);
 
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new SecurityException("Пользователь не аутентифицирован");
+            throw new SecurityException("The user is not authenticated");
         }
 
         Security currentUserSec = currentUserSecurity.get();
@@ -73,7 +69,7 @@ public class UserService {
         boolean isOwner = currentUsername.equals(username);
 
         if (!isAdmin && !isOwner) {
-            throw new SecurityException("У вас нет прав, чтобы обновлять этого пользователя");
+            throw new AccessDeniedException();
         }
 
         Optional<Security> securityOptional = securityRepository.getByUsername(username);
@@ -88,7 +84,7 @@ public class UserService {
         if (newUsername != null && !newUsername.equals(username)) {
             Optional<Security> existingSecurity = securityRepository.getByUsername(newUsername);
             if (existingSecurity.isPresent()) {
-                throw new IllegalArgumentException("Username " + newUsername + " уже занят");
+                throw new IllegalArgumentException("Username " + newUsername + " already exists");
             }
         }
 
@@ -112,21 +108,20 @@ public class UserService {
         return user;
     }
 
-    //delete
     @Transactional
-    public boolean removeUserByUsername(String username) throws SQLException {
+    public boolean removeUserByUsername(String username) {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Security> currentUserSecurity = securityRepository.getByUsername(currentUsername);
 
         if (currentUserSecurity.isEmpty()) {
-            throw new SecurityException("Пользователь не аунтифицирован");
+            throw new SecurityException("The user is not authenticated");
         }
         Security currentUserSec = currentUserSecurity.get();
         boolean isAdmin = currentUserSec.getRole() == Role.ADMIN;
         boolean isOwner = currentUsername.equals(username);
 
         if (!isAdmin && !isOwner) {
-            throw new SecurityException("У вас нет прав, чтобы удалять этого пользователя");
+            throw new AccessDeniedException();
         }
         Optional<Security> securityOptional = securityRepository.getByUsername(username);
         if (securityOptional.isEmpty()) {

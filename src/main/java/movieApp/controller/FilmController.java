@@ -22,8 +22,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @Tag(
-        name = "Управление фильмами",
-        description = "Операции с фильмами: просмотр, добавление, обновление, удаление"
+        name = "Movie management",
+        description = "Movie operations: viewing, adding, updating, deleting"
 )
 public class FilmController {
     private final FilmService filmService;
@@ -32,34 +32,32 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    // CREATE
     @PostMapping("/create")
     @Operation(
-            summary = "Добавить новый фильм",
-            description = "Добавление фильма на сайт (требуются права ADMIN)"
+            summary = "Add new movie",
+            description = "Adding a movie to the site (requires ADMIN rights)"
     )
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Фильм успешно добавлен"),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные фильма"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)")
+            @ApiResponse(responseCode = "201", description = "Movie added successfully"),
+            @ApiResponse(responseCode = "400", description = "Incorrect movie data"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "403", description = "Insufficient rights (requires ADMIN role)")
     })
     public ResponseEntity<Film> addFilm(@Valid @RequestBody FilmCreateDto filmCreateDto) {
         Film createdFilm = filmService.addFilm(filmCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdFilm);
     }
 
-    // READ
     @GetMapping
     @Operation(
-            summary = "Получить все фильмы",
-            description = "Получение списка всех фильмов на сайте"
+            summary = "Get all movies",
+            description = "Getting a list of all movies on a site"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список фильмов получен"),
-            @ApiResponse(responseCode = "204", description = "Фильмы не найдены")
+            @ApiResponse(responseCode = "200", description = "Movie list received"),
+            @ApiResponse(responseCode = "204", description = "No movies found")
     })
     public ResponseEntity<List<Film>> getAllFilms() {
         List<Film> films = filmService.getAllFilms();
@@ -71,16 +69,16 @@ public class FilmController {
 
     @GetMapping("/{title}")
     @Operation(
-            summary = "Найти фильм по названию",
-            description = "Поиск фильма по точному названию"
+            summary = "Find a movie by title",
+            description = "Search for a movie by exact title"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Фильм найден"),
-            @ApiResponse(responseCode = "404", description = "Фильм не найден")
+            @ApiResponse(responseCode = "200", description = "Film found"),
+            @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     public ResponseEntity<Film> getFilm(
             @Parameter(
-                    description = "Название фильма",
+                    description = "Movie title",
                     example = "Интерстеллар",
                     required = true
             )
@@ -93,25 +91,24 @@ public class FilmController {
         }
     }
 
-    // UPDATE
     @PutMapping("/{id}")
     @Operation(
-            summary = "Обновить информацию о фильме",
-            description = "Обновление данных фильма: название, год выхода, режиссер, рейтинг (требуются права ADMIN)"
+            summary = "Update movie information",
+            description = "Update movie data: title, year of release, director, rating (requires ADMIN rights)"
     )
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Фильм успешно обновлен"),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)"),
-            @ApiResponse(responseCode = "404", description = "Фильм не найден")
+            @ApiResponse(responseCode = "200", description = "The film has been successfully updated"),
+            @ApiResponse(responseCode = "400", description = "Incorrect data"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "403", description = "Insufficient rights (requires ADMIN role)"),
+            @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     public ResponseEntity<Film> updateFilm(
             @Parameter(
-                    description = "ID фильма",
-                    example = "123",
+                    description = "Movie ID",
+                    example = "9",
                     required = true
             )
             @PathVariable("id") int filmId,
@@ -120,24 +117,23 @@ public class FilmController {
         return ResponseEntity.ok(updatedFilm);
     }
 
-    // DELETE
     @DeleteMapping("/{id}")
     @Operation(
-            summary = "Удалить фильм",
-            description = "Удаление фильма с сайта (требуются права ADMIN)"
+            summary = "Delete movie",
+            description = "Removing a movie from the site (requires ADMIN rights)"
     )
     @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Фильм успешно удален"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав (требуется роль ADMIN)"),
-            @ApiResponse(responseCode = "404", description = "Фильм не найден")
+            @ApiResponse(responseCode = "200", description = "The film was successfully deleted"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "403", description = "Insufficient rights (requires ADMIN role)"),
+            @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     public ResponseEntity<?> deleteFilm(
             @Parameter(
-                    description = "ID фильма",
-                    example = "123",
+                    description = "Movie ID",
+                    example = "9",
                     required = true
             )
             @PathVariable("id") int filmId) {

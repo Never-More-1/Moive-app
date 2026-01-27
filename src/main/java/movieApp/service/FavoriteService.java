@@ -30,7 +30,6 @@ public class FavoriteService {
         this.userRepository = userRepository;
     }
 
-    // create
     public Favorite addToFavorites(Integer filmId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -49,7 +48,6 @@ public class FavoriteService {
         return favoriteRepository.save(favorite);
     }
 
-    // read
     public List<Favorite> findUserFavoritesByUsername(String username) {
 
         User user = userRepository.findByUsername(username)
@@ -64,7 +62,6 @@ public class FavoriteService {
         return favoriteRepository.countByUser(user);
     }
 
-     //delete
      @Transactional
     public void deleteFromFavorites(Integer filmId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

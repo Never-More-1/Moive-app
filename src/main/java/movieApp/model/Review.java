@@ -36,13 +36,6 @@ public class Review {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Review(Film film, String text, Integer rating) {
-        this.film = film;
-        this.reviewText = text;
-        this.rating = rating;
-        this.createdAt = LocalDateTime.now();
-    }
-
     public Integer getId() {
         return id;
     }

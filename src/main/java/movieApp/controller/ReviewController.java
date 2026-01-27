@@ -21,8 +21,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/reviews")
 @Tag(
-        name = "Управление отзывами",
-        description = "Операции с отзывами на фильмы: создание, чтение, обновление, удаление"
+        name = "Review management",
+        description = "Movie review operations: creating, reading, updating, deleting"
 )
 public class ReviewController {
     private final ReviewService reviewService;
@@ -31,17 +31,16 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    // CREATE
     @PostMapping
     @Operation(
-            summary = "Создать новый отзыв",
-            description = "Создание отзыва на фильм. Требуется авторизация."
+            summary = "Create a new review",
+            description = "Creating a film review. Authorization required"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Отзыв успешно создан"),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация")
+            @ApiResponse(responseCode = "201", description = "Review successfully created"),
+            @ApiResponse(responseCode = "400", description = "Incorrect data"),
+            @ApiResponse(responseCode = "401", description = "Authorization required")
     })
     public ResponseEntity<?> createReview(@Valid @RequestBody ReviewCreateDto reviewDto) {
         try {
@@ -52,17 +51,16 @@ public class ReviewController {
         }
     }
 
-    // READ
-    @GetMapping("/myreviews")
+    @GetMapping("/myself")
     @Operation(
-            summary = "Получить мои отзывы",
-            description = "Получение всех отзывов текущего авторизованного пользователя"
+            summary = "Get my reviews",
+            description = "Getting all reviews from the current logged in user"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Отзывы найдены"),
-            @ApiResponse(responseCode = "204", description = "Отзывы отсутствуют"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация")
+            @ApiResponse(responseCode = "200", description = "Reviews found"),
+            @ApiResponse(responseCode = "204", description = "No reviews"),
+            @ApiResponse(responseCode = "401", description = "Authorization required")
     })
     public ResponseEntity<List<Review>> getMyReviews() {
         try {
@@ -77,18 +75,20 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/user/{username}")
+    @GetMapping("/{username}")
     @Operation(
-            summary = "Получить отзывы пользователя",
-            description = "Получение всех отзывов по имени пользователя"
+            summary = "Get user reviews",
+            description = "Get all reviews by username"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Отзывы найдены"),
-            @ApiResponse(responseCode = "204", description = "Отзывы отсутствуют"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "200", description = "Reviews found"),
+            @ApiResponse(responseCode = "204", description = "No reviews"),
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<List<Review>> getUserReviews(
-            @Parameter(description = "Имя пользователя", example = "dante", required = true)
+            @Parameter(description = "Username",
+                    example = "dante",
+                    required = true)
             @PathVariable("username") String username) {
         try {
             List<Review> reviews = reviewService.getReviewsByUsername(username);
@@ -102,18 +102,18 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/film/{filmTitle}")
+    @GetMapping("/{filmTitle}")
     @Operation(
-            summary = "Получить отзывы на фильм",
-            description = "Получение всех отзывов по названию фильма"
+            summary = "Get movie reviews",
+            description = "Get all reviews for a movie title"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Отзывы найдены"),
-            @ApiResponse(responseCode = "204", description = "Отзывы отсутствуют"),
-            @ApiResponse(responseCode = "404", description = "Фильм не найден")
+            @ApiResponse(responseCode = "200", description = "Reviews found"),
+            @ApiResponse(responseCode = "204", description = "No reviews"),
+            @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     public ResponseEntity<List<Review>> getFilmReviews(
-            @Parameter(description = "Название фильма", example = "Интерстеллар", required = true)
+            @Parameter(description = "Film title", example = "Интерстеллар", required = true)
             @PathVariable("filmTitle") String filmTitle) {
         try {
             List<Review> reviews = reviewService.getReviewsByFilmTitle(filmTitle);
@@ -125,37 +125,17 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/film/{filmId}/rating")
+    @GetMapping("/count/{username}")
     @Operation(
-            summary = "Получить рейтинг фильма",
-            description = "Получение среднего рейтинга фильма по его ID"
+            summary = "Get the number of user reviews",
+            description = "Getting the total number of user reviews"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Рейтинг найден"),
-            @ApiResponse(responseCode = "404", description = "Фильм не найден")
-    })
-    public ResponseEntity<Double> getFilmRating(
-            @Parameter(description = "ID фильма", example = "9", required = true)
-            @PathVariable("filmId") int filmId) {
-        try {
-            Double rating = reviewService.getAverageRatingByFilmId(filmId);
-            return ResponseEntity.ok(rating);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(0.0);
-        }
-    }
-
-    @GetMapping("/user/{username}/count")
-    @Operation(
-            summary = "Получить количество отзывов пользователя",
-            description = "Получение общего количества отзывов пользователя"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Количество найдено"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "200", description = "Amount found"),
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<Integer> getUserReviewCount(
-            @Parameter(description = "Имя пользователя", example = "john_doe", required = true)
+            @Parameter(description = "Username", example = "dante", required = true)
             @PathVariable("username") String username) {
         try {
             int count = reviewService.getUserReviewCount(username);
@@ -165,20 +145,19 @@ public class ReviewController {
         }
     }
 
-    // UPDATE
-    @PutMapping("/film/{filmTitle}")
+    @PutMapping("/{filmTitle}")
     @Operation(
-            summary = "Обновить отзыв на фильм",
-            description = "Обновление отзыва текущего пользователя на указанный фильм"
+            summary = "Update your movie review",
+            description = "Update the current user's review of the specified movie"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Отзыв обновлен"),
-            @ApiResponse(responseCode = "404", description = "Отзыв не найден"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация")
+            @ApiResponse(responseCode = "200", description = "Review updated"),
+            @ApiResponse(responseCode = "404", description = "Review not found"),
+            @ApiResponse(responseCode = "401", description = "Authorization required")
     })
     public ResponseEntity<Review> updateReviewByUserAndFilm(
-            @Parameter(description = "Название фильма", example = "Интерстеллар", required = true)
+            @Parameter(description = "Film title", example = "Интерстеллар", required = true)
             @PathVariable("filmTitle") String filmTitle,
             @Valid @RequestBody ReviewUpdateDto reviewUpdate) {
         try {
@@ -189,24 +168,23 @@ public class ReviewController {
         }
     }
 
-    // DELETE
-    @DeleteMapping("/film/{filmTitle}")
+    @DeleteMapping("/{filmTitle}")
     @Operation(
-            summary = "Удалить отзыв на фильм",
-            description = "Удаление отзыва текущего пользователя на указанный фильм"
+            summary = "Delete movie review",
+            description = "Delete the current user's review of the specified movie"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Отзыв удален"),
-            @ApiResponse(responseCode = "404", description = "Отзыв не найден"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация")
+            @ApiResponse(responseCode = "200", description = "Review deleted"),
+            @ApiResponse(responseCode = "404", description = "Review not found"),
+            @ApiResponse(responseCode = "401", description = "Authorization required")
     })
     public ResponseEntity<String> deleteReviewByUserAndFilm(
-            @Parameter(description = "Название фильма", example = "Интерстеллар", required = true)
+            @Parameter(description = "Film title", example = "Интерстеллар", required = true)
             @PathVariable("filmTitle") String filmTitle) {
         boolean deleted = reviewService.deleteReview(filmTitle);
         return deleted ?
-                ResponseEntity.ok("Отзыв удален") :
-                ResponseEntity.status(HttpStatus.NOT_FOUND).body("Отзыв не найден");
+                ResponseEntity.ok("Review deleted") :
+                ResponseEntity.status(HttpStatus.NOT_FOUND).body("Review not found");
     }
 }

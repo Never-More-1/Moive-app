@@ -1,6 +1,5 @@
 package movieApp.service;
 
-import movieApp.exception.AccessDeniedException;
 import movieApp.exception.FilmAlreadyExistException;
 import movieApp.exception.FilmNotFoundException;
 import movieApp.model.Film;
@@ -21,7 +20,6 @@ public class FilmService {
         this.filmRepository = filmRepository;
     }
 
-    //create
     public Film addFilm(FilmCreateDto filmCreateDto) {
 
         if (filmRepository.existsByTitle(filmCreateDto.getTitle())) {
@@ -37,7 +35,6 @@ public class FilmService {
         return filmRepository.save(newFilm);
     }
 
-    //read
     public List<Film> getAllFilms() {
         return filmRepository.findAll();
     }
@@ -50,7 +47,7 @@ public class FilmService {
             throw new FilmNotFoundException(title);
         }
     }
-    //update
+
     public Film updateFilm(int filmId, FilmUpdateDto filmUpdateDto) {
         Film existingFilm = filmRepository.findById(filmId)
                 .orElseThrow(() -> new FilmNotFoundException(filmId));
@@ -65,7 +62,6 @@ public class FilmService {
         return filmRepository.save(existingFilm);
     }
 
-    //delete
     public Film deleteFilm(int filmId) {
         Film filmToDelete = filmRepository.findById(filmId)
                 .orElseThrow(() -> new FilmNotFoundException(filmId));

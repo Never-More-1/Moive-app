@@ -1,10 +1,16 @@
 package movieApp.model.dto.reviewDto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class ReviewUpdateDto {
+    @NotBlank
     private String reviewText;
+    @Min(1)
+    @Max(10)
     private int rating;
 
     public String getReviewText() {
@@ -20,8 +26,6 @@ public class ReviewUpdateDto {
     }
 
     public void setRating(int rating) {
-        if (rating < 1) rating = 1;
-        if (rating > 10) rating = 10;
         this.rating = rating;
     }
 }

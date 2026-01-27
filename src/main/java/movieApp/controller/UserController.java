@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import movieApp.exception.UserNotFoundException;
-import movieApp.model.Security;
 import movieApp.model.dto.userDto.UserUpdateDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -23,11 +22,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/user")
 @Tag(
-        name = "Пользователи",
-        description = "Управление пользователями системы"
+        name = "Users",
+        description = "System user management"
 )
 public class UserController {
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -35,15 +34,15 @@ public class UserController {
 
     @GetMapping()
     @Operation(
-            summary = "Получить всех пользователей",
-            description = "Получение списка всех зарегистрированных пользователей"
+            summary = "Get all users",
+            description = "Getting a list of all registered users"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Список пользователей получен"),
-            @ApiResponse(responseCode = "204", description = "Пользователи не найдены"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав")
+            @ApiResponse(responseCode = "200", description = "User list received"),
+            @ApiResponse(responseCode = "204", description = "No users found"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "403", description = "Insufficient rights")
     })
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> allUsers = userService.getAllUsers();
@@ -53,21 +52,20 @@ public class UserController {
         return ResponseEntity.ok(allUsers);
     }
 
-    //read
-    @GetMapping("/username/{username}")
+    @GetMapping("/{username}")
     @Operation(
-            summary = "Получить пользователя по имени",
-            description = "Поиск пользователя по имени пользователя (username)"
+            summary = "Get user by name",
+            description = "Search for a user by username"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Пользователь найден"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "200", description = "User found"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<User> getUserByUsername(
             @Parameter(
-                    description = "Имя пользователя",
+                    description = "Username",
                     example = "dante",
                     required = true
             )
@@ -81,45 +79,44 @@ public class UserController {
 
     @GetMapping("/myself")
     @Operation(
-            summary = "Получить информацию о себе",
-            description = "Получение информации о текущем авторизованном пользователе"
+            summary = "Get information about yourself",
+            description = "Getting information about the currently logged in user"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Информация получена"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "200", description = "Information received"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<User> getMyself() {
         Optional<User> user = userService.getMyself();
         if (user.isEmpty()) {
-            throw new UserNotFoundException("Текущий пользователь не найден");
+            throw new UserNotFoundException("Current user not found");
         }
         return ResponseEntity.ok(user.get());
     }
 
-    //update
-    @PutMapping("/username/{username}")
+    @PutMapping("/{username}")
     @Operation(
-            summary = "Обновить данные пользователя",
-            description = "Обновление информации о пользователе по имени пользователя"
+            summary = "Update user data",
+            description = "Updating user information by username"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Данные пользователя обновлены"),
-            @ApiResponse(responseCode = "400", description = "Некорректные данные"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+            @ApiResponse(responseCode = "200", description = "User details updated"),
+            @ApiResponse(responseCode = "400", description = "Incorrect data"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "403", description = "Insufficient rights"),
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<?> updateUserByUsername(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Данные для обновления пользователя",
+                    description = "User update data",
                     required = true
             )
             @RequestBody UserUpdateDto userUpdateDto,
             @Parameter(
-                    description = "Имя пользователя",
+                    description = "Username",
                     example = "dante",
                     required = true
             )
@@ -132,24 +129,23 @@ public class UserController {
         }
     }
 
-    //delete
-    @DeleteMapping("/username/{username}")
+    @DeleteMapping("/{username}")
     @Operation(
-            summary = "Удалить пользователя",
-            description = "Удаление пользователя по имени пользователя"
+            summary = "Delete user",
+            description = "Deleting a user by username"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Пользователь удален"),
-            @ApiResponse(responseCode = "401", description = "Требуется авторизация"),
-            @ApiResponse(responseCode = "403", description = "Недостаточно прав"),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
-            @ApiResponse(responseCode = "409", description = "Конфликт при удалении")
+            @ApiResponse(responseCode = "204", description = "User deleted"),
+            @ApiResponse(responseCode = "401", description = "Authorization required"),
+            @ApiResponse(responseCode = "403", description = "Insufficient rights"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "409", description = "Conflict during deletion")
     })
     public ResponseEntity<HttpStatusCode> deleteUserByUsername(
             @Parameter(
-                    description = "Имя пользователя",
-                    example = "dante",
+                    description = "Username",
+                    example = "test_user_1",
                     required = true
             )
             @PathVariable("username") String username) throws SQLException {

@@ -2,11 +2,13 @@ package movieApp.model.dto.reviewDto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class ReviewCreateDto {
     private int filmId;
+    @NotBlank
     private String reviewText;
     @Min(1)
     @Max(10)
@@ -33,8 +35,6 @@ public class ReviewCreateDto {
     }
 
     public void setRating(Integer rating) {
-        if (rating < 1) rating = 1;
-        if (rating > 10) rating = 10;
         this.rating = rating;
     }
 }

@@ -10,7 +10,6 @@ import movieApp.model.dto.authDto.AuthRequest;
 import movieApp.model.dto.userDto.UserRegistrationDto;
 import movieApp.repository.SecurityRepository;
 import movieApp.repository.UserRepository;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Slf4j
 @Service
 public class SecurityService {
     private final UserRepository userRepository;
@@ -47,10 +45,9 @@ public class SecurityService {
             noRollbackFor = {UsernameExistsException.class},
             isolation = Isolation.READ_COMMITTED)
     public boolean registration(UserRegistrationDto userRegistrationDto) throws UsernameExistsException {
-        //log.info("Registering user {}", userRegistrationDto.getUsername());
 
         if (isUsernameUsed(userRegistrationDto.getUsername())) {
-            throw new UsernameExistsException(userRegistrationDto.getUsername());
+            throw new UsernameExistsException();
         }
 
         try {
@@ -72,7 +69,6 @@ public class SecurityService {
             securityRepository.save(security);
             return true;
         } catch (Exception e) {
-            //log.error("Registration failed: {}", e.getMessage(), e);
             throw new RuntimeException("Registration failed", e);
         }
     }
@@ -105,7 +101,6 @@ public class SecurityService {
         if (!bCryptPasswordEncoder.matches(request.getPassword(), security.get().getPassword())) {
             throw new WrongPasswordException(request.getPassword());
         }
-
         return Optional.ofNullable(jwtUtils.generateToken(security.get().getUsername()));
     }
 }

@@ -1,19 +1,26 @@
 package movieApp.model.dto.userDto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
 @Component
 public class UserRegistrationDto {
-
-    private String username; // Это поле должно быть
+    @NotBlank
+    private String username;
+    @NotBlank
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d@$!%*?&]{6,}$",
+            message = "The password must contain at least 6 characters: lowercase and uppercase letters, " +
+                    "numbers and at least one special character(@$!%*?&)"
+    )
     private String password;
+    @NotBlank
+    @Email(message = "Email must be correct")
     private String email;
+    @Min(6)
+    @Max(120)
     private int age;
     private LocalDateTime createdAt;
 

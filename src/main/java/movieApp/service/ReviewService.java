@@ -74,7 +74,6 @@ public class ReviewService {
         return savedReview;
     }
 
-    //read
     public List<Review> getReviewsByUsername(String username) {
         if (!userRepository.existsByUsername(username)) {
             throw new UserNotFoundException(username);
@@ -97,7 +96,7 @@ public class ReviewService {
 
     public List<Review> getReviewsByFilmTitle(String filmTitle) {
         if (!filmRepository.existsByTitle(filmTitle)) {
-            throw new FilmNotFoundException("Фильм с названием '" + filmTitle + "' не найден");
+            throw new FilmNotFoundException(filmTitle);
         }
         return reviewRepository.findByFilmTitle(filmTitle);
     }
@@ -108,13 +107,12 @@ public class ReviewService {
 
     public Double getAverageRatingByFilmId(int filmId) {
         if (!filmRepository.existsById(filmId)) {
-            throw new FilmNotFoundException("Фильм с ID " + filmId + " не найден");
+            throw new FilmNotFoundException(filmId);
         }
         Double average = reviewRepository.findAverageRatingByFilmId(filmId);
         return average != null ? Math.round(average * 10.0) / 10.0 : 0.0;
     }
 
-    //update
     public void updateFilmAverageRating(int filmId) {
         Double averageRating = getAverageRatingByFilmId(filmId);
         Optional<Film> film = filmRepository.findById(filmId);
@@ -129,12 +127,12 @@ public class ReviewService {
     public Review updateReview(String filmTitle, ReviewUpdateDto reviewUpdateDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new SecurityException("Пользователь не аутентифицирован");
+            throw new SecurityException("The user is not authenticated");
         }
         String currentUsername = authentication.getName();
         Optional<Security> currentUserSecurity = securityRepository.getByUsername(currentUsername);
         if (currentUserSecurity.isEmpty()) {
-            throw new SecurityException("Пользователь не найден");
+            throw new SecurityException("User nit found");
         }
         Security currentUserSec = currentUserSecurity.get();
         User currentUser = currentUserSec.getUser();
@@ -152,7 +150,7 @@ public class ReviewService {
 
         if (reviewUpdateDto.getReviewText() != null) {
             if (reviewUpdateDto.getReviewText().trim().isEmpty()) {
-                throw new IllegalArgumentException("Текст отзыва не может быть пустым");
+                throw new IllegalArgumentException("The review text cannot be empty");
             }
             review.setText(reviewUpdateDto.getReviewText());
         }
@@ -161,36 +159,22 @@ public class ReviewService {
         return updatedReview;
     }
 
-    public Film updateFilm(int filmId, FilmUpdateDto filmUpdateDto) {
-        Film existingFilm = filmRepository.findById(filmId)
-                .orElseThrow(() -> new FilmNotFoundException(filmId));
-        if (!existingFilm.getTitle().equals(filmUpdateDto.getTitle())) {
-            if (filmRepository.existsByTitle(filmUpdateDto.getTitle())) {
-                throw new FilmAlreadyExistException(filmUpdateDto.getTitle());
-            }
-        }
-        existingFilm.setTitle(filmUpdateDto.getTitle());
-        existingFilm.setReleaseYear(filmUpdateDto.getReleaseYear());
-        existingFilm.setDirector(filmUpdateDto.getDirector());
-        return filmRepository.save(existingFilm);
-    }
-
     @Transactional
     public boolean deleteReview(String filmTitle) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new SecurityException("Пользователь не аутентифицирован");
+            throw new SecurityException("The user is not authenticated");
         }
         String currentUsername = authentication.getName();
         Optional<Security> currentUserSecurity = securityRepository.getByUsername(currentUsername);
         if (currentUserSecurity.isEmpty()) {
-            throw new SecurityException("Пользователь не найден");
+            throw new SecurityException("User not found");
         }
         Security currentUserSec = currentUserSecurity.get();
         User currentUser = currentUserSec.getUser();
 
         Film film = filmRepository.findByTitle(filmTitle)
-                .orElseThrow(() -> new FilmNotFoundException("Фильм '" + filmTitle + "' не найден"));
+                .orElseThrow(() -> new FilmNotFoundException(filmTitle));
         Optional<Review> reviewOptional = reviewRepository.findByUserIdAndFilmId(currentUser.getId(), film.getId());
         if (reviewOptional.isEmpty()) {
             throw new ReviewNotFoundException();

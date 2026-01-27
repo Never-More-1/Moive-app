@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -21,12 +22,21 @@ public class Security {
     @SequenceGenerator(name = "security_generator", sequenceName = "security_id_seq", allocationSize = 1)
     @GeneratedValue(generator = "security_generator")
     private Integer id;
-
+    @NotBlank
     @Column(name = "username", unique = true)
     private String username;
-
+    @NotBlank
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d@$!%*?&]{6,}$",
+            message = "The password must contain at least 6 characters: lowercase and uppercase letters, " +
+                    "numbers and at least one special character(@$!%*?&)"
+    )
     private String password;
+    @Min(6)
+    @Max(120)
     private Integer age;
+    @NotBlank
+    @Email(message = "Email must be correct")
     private String email;
 
     @Enumerated(EnumType.STRING)
