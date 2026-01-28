@@ -27,12 +27,14 @@ PostgreSQL 14+
 Application Configuration
 
 The application uses the following environment settings:
+```properties
 Variable	Assignment
 DB_URL	JDBC database URL
 DB_USER	PostgreSQL user
 DB_PASS	PostgreSQL Password
 JWT_SECRET	Secret key for JWT
 JWT_EXPIRATION_SECONDS	JWT lifetime in seconds
+```
 
 Example of application.properties
 spring.datasource.driver-class-name=org.postgresql.Driver
