@@ -1,7 +1,7 @@
 # Movie App
 The backend for the movie app: users, movie list, reviews, favorites section.
 The project is implemented in Spring Boot using JWT authentication and PostgreSQL.
-
+____
 ### Functionality
 - User and Role Management
 - JWT-Based Authentication and Authorization
