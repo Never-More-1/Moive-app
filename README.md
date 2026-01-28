@@ -27,15 +27,15 @@ PostgreSQL 14+
 Application Configuration
 
 The application uses the following environment settings:
-```properties
+
 Variable	Assignment
 DB_URL	JDBC database URL
 DB_USER	PostgreSQL user
 DB_PASS	PostgreSQL Password
 JWT_SECRET	Secret key for JWT
 JWT_EXPIRATION_SECONDS	JWT lifetime in seconds
-```
 
+```properties
 Example of application.properties
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.datasource.url=${DB_URL}
@@ -45,6 +45,7 @@ spring.datasource.hikari.connection-timeout=30000
 spring.datasource.hikari.maximum-pool-size=10
 jwt.expiration-seconds=${JWT_EXPIRATION}
 jwt.secret=${JWT_SECRET}
+```
 
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=false
