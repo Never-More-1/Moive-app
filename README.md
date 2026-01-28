@@ -89,23 +89,23 @@ The token is transmitted in the HTTP header of each request:
 Authorization: Bearer <JWT_TOKEN>
 ```
 ##  The main entities of the system
-User - System user
-Movie - Application movies
-Review - User movie reviews
-Favorites - Movies added to the user's favorites
-Security - User credentials (login, password, role)
+- User - System user
+- Movie - Application movies
+- Review - User movie reviews
+- Favorites - Movies added to the user's favorites
+- Security - User credentials (username, password, role)
 
 ## Project Architecture
 The project is built according to a classic multi-tier architecture.
 
-### Description of Layers
-Controller - REST controllers, HTTP request processing
-Service - Business logic and transactions
-Repository - Database access (Spring Data JPA)
-Model - JPA entities
-Dto - Data transfer objects
-Security - JWT, filters, Spring Security configuration
-Exceptions - User exceptions and error handling
+### Description of Layers  
+Controller - REST controllers, HTTP request processing  
+Service - Business logic and transactions  
+Repository - Database access (Spring Data JPA)  
+Model - JPA entities  
+Dto - Data transfer objects  
+Security - JWT, filters, Spring Security configuration  
+Exceptions - User exceptions and error handling  
 
 ## Business Rules and Validations
 ### The following validations are implemented in the project:
