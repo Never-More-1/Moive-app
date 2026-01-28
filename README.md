@@ -89,11 +89,11 @@ The token is transmitted in the HTTP header of each request:
 Authorization: Bearer <JWT_TOKEN>
 ```
 ##  The main entities of the system
-- User - System user
-- Movie - Application movies
-- Review - User movie reviews
-- Favorites - Movies added to the user's favorites
-- Security - User credentials (username, password, role)
+User - System user  
+Movie - Application movies  
+Review - User movie reviews  
+Favorites - Movies added to the user's favorites  
+Security - User credentials (username, password, role)  
 
 ## Project Architecture
 The project is built according to a classic multi-tier architecture.
