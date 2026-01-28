@@ -1,4 +1,4 @@
-#Movie App#
+#Movie App
 The backend for the movie app: users, movie list, reviews, favorites section.
 The project is implemented in Spring Boot using JWT authentication and PostgreSQL.
 
