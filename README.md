@@ -271,4 +271,5 @@ GET /reviews/count/{username}
 ## Possible development directions
 - implementation of refresh tokens;
 - pagination and filtering of data;
-- containerization of the application using Docker Compose;
+- creating a full-fledged ui;
+- containerization of the application using Docker Compose.
