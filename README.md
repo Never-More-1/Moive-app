@@ -3,22 +3,22 @@ The backend for the movie app: users, movie list, reviews, favorites section.
 The project is implemented in Spring Boot using JWT authentication and PostgreSQL.
 
 Functionality
--User and Role Management
--JWT-Based Authentication and Authorization
--User Review Management
--Movie Management
--Adding and Removing Movies from Favorites
--Validating Business Logic and Entity Statuses
--API Documentation via Swagger
+- User and Role Management
+- JWT-Based Authentication and Authorization
+- User Review Management
+- Movie Management
+- Adding and Removing Movies from Favorites
+- Validating Business Logic and Entity Statuses
+- API Documentation via Swagger
 
 Technology Stack
--Java 21
--Spring Boot
--Spring Security + JWT (jjwt)
--Spring Data JPA
--PostgreSQL
--Maven
--Swagger / OpenAPI
+- Java 21
+- Spring Boot
+- Spring Security + JWT (jjwt)
+- Spring Data JPA
+- PostgreSQL
+- Maven
+- Swagger / OpenAPI
 
 Requirements
 JDK 21+
