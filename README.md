@@ -29,14 +29,16 @@ Application Configuration
 The application uses the following environment settings:
 
 Variable	Assignment
-DB_URL	JDBC database URL
-DB_USER	PostgreSQL user
-DB_PASS	PostgreSQL Password
-JWT_SECRET	Secret key for JWT
-JWT_EXPIRATION_SECONDS	JWT lifetime in seconds
+| Variable | Assignment |
+|------------|------------|
+| `DB_URL` | JDBC database URL |
+| `DB_USER` | PostgreSQL user |
+| `DB_PASS`	| PostgreSQL Password |
+| `JWT_SECRET` |	Secret key for JWT |
+| `JWT_EXPIRATION_SECONDS` |	JWT lifetime in seconds |
 
-```properties
 Example of application.properties
+```properties
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.datasource.url=${DB_URL}
 spring.datasource.username=${DB_USER}
