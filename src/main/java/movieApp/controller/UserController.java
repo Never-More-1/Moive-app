@@ -37,7 +37,6 @@ public class UserController {
             summary = "Get all users",
             description = "Getting a list of all registered users"
     )
-    @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User list received"),
             @ApiResponse(responseCode = "204", description = "No users found"),
@@ -57,7 +56,6 @@ public class UserController {
             summary = "Get user by name",
             description = "Search for a user by username"
     )
-    @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User found"),
             @ApiResponse(responseCode = "401", description = "Authorization required"),

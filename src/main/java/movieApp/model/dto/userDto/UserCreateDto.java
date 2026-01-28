@@ -8,7 +8,6 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-//TODO: пофиксить Lombok!!!
 @Data
 public class UserCreateDto {
     private int id;
@@ -40,35 +39,4 @@ public class UserCreateDto {
         this.username = username;
     }
 
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public LocalDateTime getCreated() {
-        return created;
-    }
-
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
-    }
 }

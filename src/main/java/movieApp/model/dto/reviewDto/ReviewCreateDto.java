@@ -1,5 +1,6 @@
 package movieApp.model.dto.reviewDto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -7,19 +8,24 @@ import lombok.Data;
 
 @Data
 public class ReviewCreateDto {
-    private int filmId;
+    @Schema(
+            description = "Film title",
+            example = "Интерстеллар",
+            requiredMode = Schema.RequiredMode.REQUIRED
+    )
+    private String filmTitle;
     @NotBlank
     private String reviewText;
     @Min(1)
     @Max(10)
     private Integer rating;
 
-    public int getFilmId() {
-        return filmId;
+    public String getFilmTitle() {
+        return filmTitle;
     }
 
-    public void setFilmId(int filmId) {
-        this.filmId = filmId;
+    public void setFilmTitle(String filmTitle) {
+        this.filmTitle = filmTitle;
     }
 
     public String getReviewText() {

@@ -20,7 +20,7 @@ public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final FilmRepository filmRepository;
-    private final UserRepository userRepository; // Добавьте этот репозиторий
+    private final UserRepository userRepository;
 
     public FavoriteService(FavoriteRepository favoriteRepository,
                            FilmRepository filmRepository,

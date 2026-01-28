@@ -43,6 +43,7 @@ public class ReviewController {
             @ApiResponse(responseCode = "401", description = "Authorization required")
     })
     public ResponseEntity<?> createReview(@Valid @RequestBody ReviewCreateDto reviewDto) {
+
         try {
             Review createdReview = reviewService.addReview(reviewDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdReview);
@@ -75,7 +76,7 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/user/{username}")
     @Operation(
             summary = "Get user reviews",
             description = "Get all reviews by username"
@@ -102,7 +103,7 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/{filmTitle}")
+    @GetMapping("/film/{filmTitle}")
     @Operation(
             summary = "Get movie reviews",
             description = "Get all reviews for a movie title"
@@ -113,7 +114,9 @@ public class ReviewController {
             @ApiResponse(responseCode = "404", description = "Movie not found")
     })
     public ResponseEntity<List<Review>> getFilmReviews(
-            @Parameter(description = "Film title", example = "Интерстеллар", required = true)
+            @Parameter(description = "Film title",
+                    example = "Интерстеллар",
+                    required = true)
             @PathVariable("filmTitle") String filmTitle) {
         try {
             List<Review> reviews = reviewService.getReviewsByFilmTitle(filmTitle);
@@ -135,7 +138,9 @@ public class ReviewController {
             @ApiResponse(responseCode = "404", description = "User not found")
     })
     public ResponseEntity<Integer> getUserReviewCount(
-            @Parameter(description = "Username", example = "dante", required = true)
+            @Parameter(description = "Username",
+                    example = "dante",
+                    required = true)
             @PathVariable("username") String username) {
         try {
             int count = reviewService.getUserReviewCount(username);
@@ -157,7 +162,9 @@ public class ReviewController {
             @ApiResponse(responseCode = "401", description = "Authorization required")
     })
     public ResponseEntity<Review> updateReviewByUserAndFilm(
-            @Parameter(description = "Film title", example = "Интерстеллар", required = true)
+            @Parameter(description = "Film title",
+                    example = "Интерстеллар",
+                    required = true)
             @PathVariable("filmTitle") String filmTitle,
             @Valid @RequestBody ReviewUpdateDto reviewUpdate) {
         try {
@@ -180,7 +187,9 @@ public class ReviewController {
             @ApiResponse(responseCode = "401", description = "Authorization required")
     })
     public ResponseEntity<String> deleteReviewByUserAndFilm(
-            @Parameter(description = "Film title", example = "Интерстеллар", required = true)
+            @Parameter(description = "Film title",
+                    example = "Интерстеллар",
+                    required = true)
             @PathVariable("filmTitle") String filmTitle) {
         boolean deleted = reviewService.deleteReview(filmTitle);
         return deleted ?

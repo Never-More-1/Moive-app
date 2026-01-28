@@ -1,6 +1,5 @@
 package movieApp.security;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -89,16 +88,14 @@ public class SecurityController {
         if (authRequest == null || authRequest.getUsername() == null || authRequest.getPassword() == null) {
             throw new ValidationException("Invalid request");
         }
-
         Optional<String> jwt = securityService.generateJwt(authRequest);
         if (jwt.isPresent()) {
             return ResponseEntity.ok(new AuthResponse(jwt.get()));
         }
-
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     @GetMapping("/{id}")
     @Operation(
             summary = "Get security record by ID",
@@ -125,13 +122,13 @@ public class SecurityController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/role/{role}")
+    @GetMapping("role/{role}")
     @Operation(
             summary = "Get users by role",
             description = "Getting a list of security users by role (ADMIN or USER)"
     )
     @SecurityRequirement(name = "bearerAuth")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List received"),
             @ApiResponse(responseCode = "400", description = "Incorrect role"),
@@ -191,12 +188,11 @@ public class SecurityController {
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
-    @Hidden
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/{id}/admin")
+    @PostMapping("/{username}")
     @Operation(
-            summary = "Assign the ADMIN role",
-            description = "Assigning the ADMIN role to a user by ID (for administrators only)"
+            summary = "Assign the MODERATOR role",
+            description = "Assigning the MODERATOR role to a user by ID (for ADMIN only)"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
@@ -208,12 +204,12 @@ public class SecurityController {
     })
     public ResponseEntity<HttpStatus> setRoleToAdmin(
             @Parameter(
-                    description = "User ID",
-                    example = "9",
+                    description = "Username",
+                    example = "dante",
                     required = true
             )
-            @PathVariable Integer id) {
-        if (securityService.setRoleToAdmin(id)) {
+            @PathVariable String username) {
+        if (securityService.setRoleToModerator(username)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).build();

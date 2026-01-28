@@ -16,7 +16,7 @@ import java.util.Optional;
 public class FilmService {
     private final FilmRepository filmRepository;
 
-    public FilmService(FilmRepository filmRepository, UserRepository userRepository) {
+    public FilmService(FilmRepository filmRepository) {
         this.filmRepository = filmRepository;
     }
 
@@ -48,24 +48,10 @@ public class FilmService {
         }
     }
 
-    public Film updateFilm(int filmId, FilmUpdateDto filmUpdateDto) {
-        Film existingFilm = filmRepository.findById(filmId)
-                .orElseThrow(() -> new FilmNotFoundException(filmId));
-        if (!existingFilm.getTitle().equals(filmUpdateDto.getTitle())) {
-            if (filmRepository.existsByTitle(filmUpdateDto.getTitle())) {
-                throw new FilmAlreadyExistException(filmUpdateDto.getTitle());
-            }
-        }
-        existingFilm.setTitle(filmUpdateDto.getTitle());
-        existingFilm.setReleaseYear(filmUpdateDto.getReleaseYear());
-        existingFilm.setDirector(filmUpdateDto.getDirector());
-        return filmRepository.save(existingFilm);
-    }
-
-    public Film deleteFilm(int filmId) {
-        Film filmToDelete = filmRepository.findById(filmId)
-                .orElseThrow(() -> new FilmNotFoundException(filmId));
-        filmRepository.deleteById(filmId);
+    public Film deleteFilm(String filmTitle) {
+        Film filmToDelete = filmRepository.findByTitle(filmTitle)
+                .orElseThrow(() -> new FilmNotFoundException(filmTitle));
+        filmRepository.deleteById(filmToDelete.getId());
         return filmToDelete;
     }
 }

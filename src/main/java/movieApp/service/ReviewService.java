@@ -39,28 +39,28 @@ public class ReviewService {
     public Review addReview(ReviewCreateDto reviewDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new SecurityException("Пользователь не аутентифицирован");
+            throw new SecurityException("The user is not authenticated");
         }
         String currentUsername = authentication.getName();
         Optional<Security> currentUserSecurity = securityRepository.getByUsername(currentUsername);
         if (currentUserSecurity.isEmpty()) {
-            throw new SecurityException("Пользователь не аутентифицирован");
+            throw new SecurityException("The user is not authenticated");
         }
         Security currentSecurity = currentUserSecurity.get();
         User currentUser = currentSecurity.getUser();
         if (currentUser == null) {
             throw new UserNotFoundException(currentUsername);
         }
-        Film film = filmRepository.findById(reviewDto.getFilmId())
-                .orElseThrow(() -> new FilmNotFoundException("Фильм не найден с ID: " + reviewDto.getFilmId()));
-        if (reviewRepository.existsByUserIdAndFilmId(currentUser.getId(), reviewDto.getFilmId())) {
+        Film film = filmRepository.findByTitle(reviewDto.getFilmTitle())
+                .orElseThrow(() -> new FilmNotFoundException(reviewDto.getFilmTitle()));
+        if (reviewRepository.existsByUserIdAndFilmTitle(currentUser.getId(), reviewDto.getFilmTitle())) {
             throw new ReviewAlreadyExistException();
         }
         if (reviewDto.getReviewText() == null || reviewDto.getReviewText().trim().isEmpty()) {
-            throw new IllegalArgumentException("Текст отзыва не может быть пустым");
+            throw new IllegalArgumentException("The review text cannot be empty");
         }
         if (reviewDto.getRating() < 1 || reviewDto.getRating() > 10) {
-            throw new IllegalArgumentException("Рейтинг должен быть в диапазоне от 1 до 10");
+            throw new IllegalArgumentException("The rating must be in the range from 1 to 10");
         }
         Review review = new Review();
         review.setUser(currentUser);
@@ -69,7 +69,7 @@ public class ReviewService {
         review.setRating(reviewDto.getRating());
         review.setCreatedAt(LocalDateTime.now());
         Review savedReview = reviewRepository.save(review);
-        updateFilmAverageRating(reviewDto.getFilmId());
+        updateFilmAverageRating(reviewDto.getFilmTitle());
 
         return savedReview;
     }
@@ -84,7 +84,7 @@ public class ReviewService {
     public List<Review> getMyReviews() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new SecurityException("Пользователь не аутентифицирован");
+            throw new SecurityException("The user is not authenticated");
         }
 
         String username = authentication.getName();
@@ -105,17 +105,17 @@ public class ReviewService {
         return reviewRepository.countByUserUsername(username);
     }
 
-    public Double getAverageRatingByFilmId(int filmId) {
-        if (!filmRepository.existsById(filmId)) {
-            throw new FilmNotFoundException(filmId);
+    public Double getAverageRatingByFilmTitle(String filmTitle) {
+        if (!filmRepository.existsByTitle(filmTitle)) {
+            throw new FilmNotFoundException(filmTitle);
         }
-        Double average = reviewRepository.findAverageRatingByFilmId(filmId);
+        Double average = reviewRepository.findAverageRatingByFilmTitle(filmTitle);
         return average != null ? Math.round(average * 10.0) / 10.0 : 0.0;
     }
 
-    public void updateFilmAverageRating(int filmId) {
-        Double averageRating = getAverageRatingByFilmId(filmId);
-        Optional<Film> film = filmRepository.findById(filmId);
+    public void updateFilmAverageRating(String filmTitle) {
+        Double averageRating = getAverageRatingByFilmTitle(filmTitle);
+        Optional<Film> film = filmRepository.findByTitle(filmTitle);
         if (film.isPresent()) {
             Film filmToUpdate = film.get();
             filmToUpdate.setRating(averageRating);
@@ -155,7 +155,7 @@ public class ReviewService {
             review.setText(reviewUpdateDto.getReviewText());
         }
         Review updatedReview = reviewRepository.save(review);
-        updateFilmAverageRating(film.getId());
+        updateFilmAverageRating(film.getTitle());
         return updatedReview;
     }
 
@@ -190,7 +190,7 @@ public class ReviewService {
         }
 
         reviewRepository.delete(review);
-        updateFilmAverageRating(film.getId());
+        updateFilmAverageRating(film.getTitle());
 
         return true;
     }

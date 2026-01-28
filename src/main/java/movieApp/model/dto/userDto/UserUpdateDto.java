@@ -9,7 +9,12 @@ public class UserUpdateDto {
 
     @Size(min = 3, max = 15, message = "Username must be minimum 3, maximum 15")
     private String username;
-
+    @NotBlank
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d@$!%*?&]{6,}$",
+            message = "The password must contain at least 6 characters: lowercase and uppercase letters, " +
+                    "numbers and at least one special character(@$!%*?&)"
+    )
     private String password;
 
     @Min(value = 1)

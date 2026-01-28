@@ -64,7 +64,6 @@ public class FavoriteController {
             summary = "Get user's favorites",
             description = "Get a list of favorite movies of a specified user"
     )
-    @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Favorites list received"),
             @ApiResponse(responseCode = "401", description = "Authorization required"),
@@ -91,7 +90,6 @@ public class FavoriteController {
             summary = "Number of favorite films",
             description = "Get the number of favorite movies for a specified user"
     )
-    @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Amount received"),
             @ApiResponse(responseCode = "401", description = "Authorization required"),

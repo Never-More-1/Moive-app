@@ -77,11 +77,11 @@ public class SecurityService {
         return securityRepository.findById(id);
     }
 
-    public Boolean setRoleToAdmin(int id) {
-        if (!userRepository.existsById(id)) {
-            throw new UserNotFoundException(id);
+    public Boolean setRoleToModerator(String username) {
+        if (!userRepository.existsByUsername(username)) {
+            throw new UserNotFoundException(username);
         }
-        return securityRepository.setAdminRoleByUserId(id) > 0;
+        return securityRepository.setAdminRoleByUsername(username) > 0;
     }
 
     public boolean isUsernameUsed(String username) {

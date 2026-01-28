@@ -11,13 +11,12 @@ public class UserRegistrationDto {
     private String username;
     @NotBlank
     @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[A-Za-z\\d@$!%*?&]{6,}$",
+            regexp = "^(?=.*[a-zA-Z])(?=.*\\d).{6,}$",
             message = "The password must contain at least 6 characters: lowercase and uppercase letters, " +
                     "numbers and at least one special character(@$!%*?&)"
     )
     private String password;
     @NotBlank
-    @Email(message = "Email must be correct")
     private String email;
     @Min(6)
     @Max(120)

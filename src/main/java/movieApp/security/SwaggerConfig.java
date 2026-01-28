@@ -5,7 +5,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,25 +32,6 @@ public class SwaggerConfig {
                                             .bearerFormat("JWT")
                                             .name("Authorization")
                                             .description("Enter the JWT token. Format: Bearer {token}")));
-        }
-
-        @Bean
-        public GroupedOpenApi publicApi() {
-            return GroupedOpenApi.builder()
-                    .group("public")
-                    .pathsToMatch("/security/jwt", "/security/registration", "/debug/**")
-                    .build();
-        }
-
-        @Bean
-        public GroupedOpenApi protectedApi() {
-            return GroupedOpenApi.builder()
-                    .group("protected")
-                    .pathsToMatch("/**")
-                    .pathsToExclude("/security/jwt", "/security/registration", "/swagger-ui/**", "/v3/api-docs/**")
-                    .addOpenApiCustomizer(openApi ->
-                            openApi.addSecurityItem(new SecurityRequirement().addList("bearerAuth")))
-                    .build();
         }
     }
 }

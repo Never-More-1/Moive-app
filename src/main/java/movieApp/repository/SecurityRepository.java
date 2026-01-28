@@ -21,6 +21,6 @@ public interface SecurityRepository extends JpaRepository<Security, Integer> {
 
     @Transactional
     @Modifying
-    @Query(nativeQuery = true, value = "UPDATE security SET role = 'ADMIN' WHERE user_id = :userId")
-    int setAdminRoleByUserId(Integer userId);
+    @Query(nativeQuery = true, value = "UPDATE security SET role = 'MODERATOR' WHERE username = :username")
+    int setAdminRoleByUsername(String username);
 }

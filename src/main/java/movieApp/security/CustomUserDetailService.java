@@ -23,7 +23,7 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<Security> securityOptional = securityRepository.getByUsername(username);
         if (securityOptional.isEmpty()) {
-            throw new UsernameNotFoundException("User not found with login: " + username);
+            throw new UsernameNotFoundException(username);
         }
 
         Security security = securityOptional.get();
