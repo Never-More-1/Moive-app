@@ -17,7 +17,7 @@ public class UserUpdateDto {
     )
     private String password;
 
-    @Min(value = 1)
+    @Min(value = 6)
     @Max(value = 120)
     private int age;
 

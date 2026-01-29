@@ -31,7 +31,7 @@ public class FavoriteController {
         this.favoriteService = favoriteService;
     }
 
-    @PostMapping("/{filmId}")
+    @PostMapping("/{filmTitle}")
     @Operation(
             summary = "Add movie to favorites",
             description = "Adding a movie to the current user's favorites list"
@@ -45,13 +45,13 @@ public class FavoriteController {
     })
     public ResponseEntity<?> addToFavoritesWithPath(
             @Parameter(
-                    description = "Movie ID",
-                    example = "9",
+                    description = "Movie title",
+                    example = "Интерстеллар",
                     required = true
             )
-            @PathVariable Integer filmId) {
+            @PathVariable String filmTitle) {
         try {
-            Favorite favorite = favoriteService.addToFavorites(filmId);
+            Favorite favorite = favoriteService.addToFavorites(filmTitle);
             FavoriteResponseDto responseDto = FavoriteResponseDto.fromFavorite(favorite);
             return ResponseEntity.ok(responseDto);
         } catch (RuntimeException e) {
@@ -110,7 +110,7 @@ public class FavoriteController {
         }
     }
 
-    @DeleteMapping("/{filmId}")
+    @DeleteMapping("/{filmTitle}")
     @Operation(
             summary = "Remove movie from favorites",
             description = "Removing a movie from the current user's favorites list"
@@ -125,13 +125,13 @@ public class FavoriteController {
 
     public ResponseEntity<?> deleteFromFavorites(
             @Parameter(
-                    description = "Movie ID",
-                    example = "9",
+                    description = "Movie title",
+                    example = "Интерстеллар",
                     required = true
             )
-            @PathVariable Integer filmId) {
+            @PathVariable String filmTitle) {
         try {
-            favoriteService.deleteFromFavorites(filmId);
+            favoriteService.deleteFromFavorites(filmTitle);
             return ResponseEntity.ok("The film has been deleted from favorites");
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

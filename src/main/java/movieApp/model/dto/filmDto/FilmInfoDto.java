@@ -1,9 +1,11 @@
 package movieApp.model.dto.filmDto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 @Data
 public class FilmInfoDto {
+    @JsonIgnore
     private Integer id;
     private String title;
     private Integer releaseYear;

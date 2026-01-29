@@ -90,7 +90,6 @@ public class UserService {
 
         user.setUsername(userUpdateDto.getUsername());
         user.setAge(userUpdateDto.getAge());
-        user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
 
         security.setUsername(userUpdateDto.getUsername());
@@ -101,8 +100,6 @@ public class UserService {
             String encodedPassword = passwordEncoder.encode(userUpdateDto.getPassword());
             security.setPassword(encodedPassword);
         }
-
-        security.setCreatedAt(LocalDateTime.now());
         securityRepository.save(security);
 
         return user;

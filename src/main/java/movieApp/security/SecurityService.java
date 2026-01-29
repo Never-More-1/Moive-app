@@ -73,8 +73,8 @@ public class SecurityService {
         }
     }
 
-    public Optional<Security> getSecurityById(int id) {
-        return securityRepository.findById(id);
+    public Optional<Security> getSecurityByUsername(String username) {
+        return securityRepository.getByUsername(username);
     }
 
     public Boolean setRoleToModerator(String username) {

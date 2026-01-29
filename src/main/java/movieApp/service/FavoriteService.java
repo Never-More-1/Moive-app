@@ -30,15 +30,15 @@ public class FavoriteService {
         this.userRepository = userRepository;
     }
 
-    public Favorite addToFavorites(Integer filmId) {
+    public Favorite addToFavorites(String filmTitle) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        Film film = filmRepository.findById(filmId)
-                .orElseThrow(() -> new FilmNotFoundException(filmId));
+        Film film = filmRepository.findByTitle(filmTitle)
+                .orElseThrow(() -> new FilmNotFoundException(filmTitle));
 
         if (favoriteRepository.existsByUserAndFilm(user, film)) {
             throw new FilmAlreadyInFavoritesException(film.getTitle());
@@ -63,15 +63,15 @@ public class FavoriteService {
     }
 
      @Transactional
-    public void deleteFromFavorites(Integer filmId) {
+    public void deleteFromFavorites(String filmTitle) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        Film film = filmRepository.findById(filmId)
-                .orElseThrow(() -> new FilmNotFoundException(filmId));
+        Film film = filmRepository.findByTitle(filmTitle)
+                .orElseThrow(() -> new FilmNotFoundException(filmTitle));
 
         if (!favoriteRepository.existsByUserAndFilm(user, film)) {
             throw new FavoriteNotFoundException();

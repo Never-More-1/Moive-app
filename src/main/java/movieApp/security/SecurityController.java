@@ -95,11 +95,11 @@ public class SecurityController {
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{username}")
     @Operation(
             summary = "Get security record by ID",
-            description = "Obtaining user security information by ID"
+            description = "Obtaining user security information by username"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {
@@ -108,14 +108,14 @@ public class SecurityController {
             @ApiResponse(responseCode = "403", description = "Insufficient rights (requires ADMIN role)"),
             @ApiResponse(responseCode = "404", description = "Record not found")
     })
-    public ResponseEntity<Security> getSecurityById(
+    public ResponseEntity<Security> getSecurityByUsername(
             @Parameter(
-                    description = "Security entry ID",
-                    example = "9",
+                    description = "Security entry username",
+                    example = "dante",
                     required = true
             )
-            @PathVariable("id") int id) {
-        Optional<Security> security = securityService.getSecurityById(id);
+            @PathVariable("username") String username) {
+        Optional<Security> security = securityService.getSecurityByUsername(username);
         if (security.isPresent()) {
             return new ResponseEntity<>(security.get(), HttpStatus.OK);
         }
@@ -128,7 +128,7 @@ public class SecurityController {
             description = "Getting a list of security users by role (ADMIN or USER)"
     )
     @SecurityRequirement(name = "bearerAuth")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List received"),
             @ApiResponse(responseCode = "400", description = "Incorrect role"),
@@ -191,8 +191,8 @@ public class SecurityController {
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{username}")
     @Operation(
-            summary = "Assign the MODERATOR role",
-            description = "Assigning the MODERATOR role to a user by ID (for ADMIN only)"
+            summary = "Assign the ADMIN role",
+            description = "Assigning the ADMIN role to a user by username (for ADMIN only)"
     )
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses(value = {

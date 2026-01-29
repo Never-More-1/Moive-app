@@ -39,7 +39,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/security/jwt").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/security/registration").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/security/role/{role}").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.POST, "/security/**").hasAnyRole("ADMIN", "MODERATOR")
+                                .requestMatchers(HttpMethod.POST, "/security/**").hasAnyRole("ADMIN")
                                 .requestMatchers(HttpMethod.GET, "/reviews/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/films").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/films/{id}").permitAll()

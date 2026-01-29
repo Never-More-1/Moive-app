@@ -36,7 +36,10 @@ public class Security {
     @Max(120)
     private Integer age;
     @NotBlank
-    @Email(message = "Email must be correct")
+    @Pattern(
+            regexp = "\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*",
+            message = "Email must be correct"
+    )
     private String email;
 
     @Enumerated(EnumType.STRING)
