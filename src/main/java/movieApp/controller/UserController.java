@@ -45,7 +45,7 @@ public class UserController {
     })
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> allUsers = userService.getAllUsers();
-        if(allUsers.isEmpty()){
+        if (allUsers.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(allUsers);
@@ -146,7 +146,7 @@ public class UserController {
                     example = "test_user_1",
                     required = true
             )
-            @PathVariable("username") String username) throws SQLException {
+            @PathVariable("username") String username) {
         if (userService.removeUserByUsername(username)) {
             return ResponseEntity.noContent().build();
         }

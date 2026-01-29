@@ -20,9 +20,9 @@ public class SwaggerConfig {
 
             return new OpenAPI()
                     .info(new Info()
-                            .title("Movie App API")
+                            .title("Movie App")
                             .version("1.0")
-                            .description("API for managing movies"))
+                            .description("App for managing movies"))
                     .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                     .components(new Components()
                             .addSecuritySchemes(securitySchemeName,
